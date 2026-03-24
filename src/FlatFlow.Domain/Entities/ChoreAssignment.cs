@@ -23,6 +23,7 @@ namespace FlatFlow.Domain.Entities
         public void Complete()
         {
             CompletedAt = DateTime.UtcNow;
+            SetUpdatedAt();
         }
     }
 }

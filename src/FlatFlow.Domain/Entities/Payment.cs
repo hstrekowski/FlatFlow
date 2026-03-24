@@ -29,6 +29,7 @@ namespace FlatFlow.Domain.Entities
         {
             Title = title;
             Amount = amount;
+            SetUpdatedAt();
         }
     }
 }

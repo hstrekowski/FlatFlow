@@ -56,6 +56,16 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var assignment = CreateAssignment();
+
+            // Assert
+            assignment.UpdatedAt.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalled_CompletedAtIsNull()
         {
             // Arrange & Act
@@ -90,6 +100,22 @@ namespace FlatFlow.Domain.UnitTests
             // Assert
             assignment.CompletedAt.Should().NotBeNull();
             assignment.CompletedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
+        public void Complete_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var assignment = CreateAssignment();
+            var before = DateTime.UtcNow;
+
+            // Act
+            assignment.Complete();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            assignment.UpdatedAt.Should().NotBeNull();
+            assignment.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Fact]

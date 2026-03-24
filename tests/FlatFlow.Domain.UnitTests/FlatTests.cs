@@ -56,6 +56,16 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Assert
+            flat.UpdatedAt.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalled_GeneratesAccessCodeWith8UppercaseChars()
         {
             // Arrange & Act
@@ -117,6 +127,22 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void UpdateName_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var flat = new Flat("Original", _validAddress);
+            var before = DateTime.UtcNow;
+
+            // Act
+            flat.UpdateName("New Name");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            flat.UpdatedAt.Should().NotBeNull();
+            flat.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
         public void UpdateAddress_WithNewAddress_ChangesAddress()
         {
             // Arrange
@@ -131,6 +157,23 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void UpdateAddress_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            var newAddress = new Address("New St 5", "Krakow", "30-001", "Poland");
+            var before = DateTime.UtcNow;
+
+            // Act
+            flat.UpdateAddress(newAddress);
+            var after = DateTime.UtcNow;
+
+            // Assert
+            flat.UpdatedAt.Should().NotBeNull();
+            flat.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
         public void RefreshAccessCode_WhenCalled_ChangesAccessCode()
         {
             // Arrange
@@ -142,6 +185,22 @@ namespace FlatFlow.Domain.UnitTests
 
             // Assert
             flat.AccessCode.Should().NotBe(originalCode);
+        }
+
+        [Fact]
+        public void RefreshAccessCode_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            var before = DateTime.UtcNow;
+
+            // Act
+            flat.RefreshAccessCode();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            flat.UpdatedAt.Should().NotBeNull();
+            flat.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Fact]

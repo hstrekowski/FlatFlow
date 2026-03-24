@@ -80,6 +80,16 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var share = CreatePaymentShare();
+
+            // Assert
+            share.UpdatedAt.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalledTwice_GeneratesUniqueIds()
         {
             // Arrange & Act
@@ -114,6 +124,38 @@ namespace FlatFlow.Domain.UnitTests
 
             // Assert
             share.Status.Should().Be(PaymentShareStatus.Paid);
+        }
+
+        [Fact]
+        public void MarkAsPartial_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+            var before = DateTime.UtcNow;
+
+            // Act
+            share.MarkAsPartial();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            share.UpdatedAt.Should().NotBeNull();
+            share.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
+        public void MarkAsPaid_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+            var before = DateTime.UtcNow;
+
+            // Act
+            share.MarkAsPaid();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            share.UpdatedAt.Should().NotBeNull();
+            share.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Fact]

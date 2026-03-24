@@ -81,6 +81,16 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var note = CreateNote();
+
+            // Assert
+            note.UpdatedAt.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalledTwice_GeneratesUniqueIds()
         {
             // Arrange & Act
@@ -106,6 +116,22 @@ namespace FlatFlow.Domain.UnitTests
             // Assert
             note.Title.Should().Be(title);
             note.Content.Should().Be(content);
+        }
+
+        [Fact]
+        public void UpdateContent_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var note = CreateNote();
+            var before = DateTime.UtcNow;
+
+            // Act
+            note.UpdateContent("New Title", "New Content");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            note.UpdatedAt.Should().NotBeNull();
+            note.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Fact]

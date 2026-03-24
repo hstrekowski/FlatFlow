@@ -29,6 +29,7 @@ namespace FlatFlow.Domain.Entities
             Title = title;
             Description = description;
             Frequency = frequency;
+            SetUpdatedAt();
         }
     }
 }

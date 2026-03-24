@@ -34,11 +34,13 @@ namespace FlatFlow.Domain.Entities
         {
             FirstName = firstName;
             LastName = lastName;
+            SetUpdatedAt();
         }
 
         public void UpdateEmail(string email)
         {
             Email = email;
+            SetUpdatedAt();
         }
     }
 }

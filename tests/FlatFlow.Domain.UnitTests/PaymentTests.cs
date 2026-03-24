@@ -82,6 +82,16 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var payment = CreatePayment();
+
+            // Assert
+            payment.UpdatedAt.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalled_InitializesEmptyPaymentShares()
         {
             // Arrange & Act
@@ -116,6 +126,22 @@ namespace FlatFlow.Domain.UnitTests
             // Assert
             payment.Title.Should().Be(title);
             payment.Amount.Should().Be(amount);
+        }
+
+        [Fact]
+        public void Update_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var payment = CreatePayment();
+            var before = DateTime.UtcNow;
+
+            // Act
+            payment.Update("New Title", 200m);
+            var after = DateTime.UtcNow;
+
+            // Assert
+            payment.UpdatedAt.Should().NotBeNull();
+            payment.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Fact]

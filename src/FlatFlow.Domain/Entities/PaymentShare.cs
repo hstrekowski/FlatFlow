@@ -27,11 +27,13 @@ namespace FlatFlow.Domain.Entities
         public void MarkAsPartial()
         {
             Status = PaymentShareStatus.Partial;
+            SetUpdatedAt();
         }
 
         public void MarkAsPaid()
         {
             Status = PaymentShareStatus.Paid;
+            SetUpdatedAt();
         }
     }
 }

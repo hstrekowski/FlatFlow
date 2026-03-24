@@ -79,6 +79,16 @@ namespace FlatFlow.Domain.UnitTests
             tenant.CreatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
+        [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var tenant = CreateTenant();
+
+            // Assert
+            tenant.UpdatedAt.Should().BeNull();
+        }
+
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
@@ -143,6 +153,22 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void UpdateProfile_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var tenant = CreateTenant();
+            var before = DateTime.UtcNow;
+
+            // Act
+            tenant.UpdateProfile("Jane", "Smith");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            tenant.UpdatedAt.Should().NotBeNull();
+            tenant.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
         public void UpdateProfile_WhenCalled_DoesNotChangeOtherProperties()
         {
             // Arrange
@@ -155,6 +181,22 @@ namespace FlatFlow.Domain.UnitTests
             tenant.Email.Should().Be("john@example.com");
             tenant.UserId.Should().Be(_userId);
             tenant.FlatId.Should().Be(_flatId);
+        }
+
+        [Fact]
+        public void UpdateEmail_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var tenant = CreateTenant();
+            var before = DateTime.UtcNow;
+
+            // Act
+            tenant.UpdateEmail("new@example.com");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            tenant.UpdatedAt.Should().NotBeNull();
+            tenant.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Theory]

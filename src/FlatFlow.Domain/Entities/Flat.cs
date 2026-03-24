@@ -24,11 +24,13 @@ namespace FlatFlow.Domain.Entities
         public void UpdateName(string name)
         {
             Name = name;
+            SetUpdatedAt();
         }
 
         public void UpdateAddress(Address address)
         {
             Address = address;
+            SetUpdatedAt();
         }
 
         private string GenerateAccessCode()
@@ -39,6 +41,7 @@ namespace FlatFlow.Domain.Entities
         public void RefreshAccessCode()
         {
             AccessCode = GenerateAccessCode();
+            SetUpdatedAt();
         }
     }
 }

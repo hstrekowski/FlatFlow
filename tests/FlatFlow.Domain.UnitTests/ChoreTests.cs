@@ -85,6 +85,16 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var chore = CreateChore();
+
+            // Assert
+            chore.UpdatedAt.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalled_InitializesEmptyChoreAssignments()
         {
             // Arrange & Act
@@ -120,6 +130,22 @@ namespace FlatFlow.Domain.UnitTests
             chore.Title.Should().Be(title);
             chore.Description.Should().Be(description);
             chore.Frequency.Should().Be(frequency);
+        }
+
+        [Fact]
+        public void Update_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var chore = CreateChore();
+            var before = DateTime.UtcNow;
+
+            // Act
+            chore.Update("New", "New desc", ChoreFrequency.Monthly);
+            var after = DateTime.UtcNow;
+
+            // Assert
+            chore.UpdatedAt.Should().NotBeNull();
+            chore.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Fact]

@@ -27,6 +27,7 @@ namespace FlatFlow.Domain.Entities
         {
             Title = title;
             Content = content;
+            SetUpdatedAt();
         }
     }
 }
