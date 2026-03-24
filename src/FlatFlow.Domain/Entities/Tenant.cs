@@ -15,6 +15,8 @@ namespace FlatFlow.Domain.Entities
 
         public List<ChoreAssignment> ChoreAssignments { get; private set; } = [];
         public List<PaymentShare> PaymentShares { get; private set; } = [];
+        public List<Payment> CreatedPayments { get; private set; } = [];
+        public List<Note> AuthoredNotes { get; private set; } = [];
 
         protected Tenant() : base() { }
 

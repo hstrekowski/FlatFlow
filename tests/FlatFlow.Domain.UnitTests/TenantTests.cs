@@ -110,6 +110,8 @@ namespace FlatFlow.Domain.UnitTests
             // Assert
             tenant.ChoreAssignments.Should().BeEmpty();
             tenant.PaymentShares.Should().BeEmpty();
+            tenant.CreatedPayments.Should().BeEmpty();
+            tenant.AuthoredNotes.Should().BeEmpty();
         }
 
         [Fact]
