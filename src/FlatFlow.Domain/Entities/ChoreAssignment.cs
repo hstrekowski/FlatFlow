@@ -28,8 +28,13 @@ namespace FlatFlow.Domain.Entities
             SetUpdatedAt();
         }
 
+        public bool IsCompleted => CompletedAt.HasValue;
+
         public void Complete()
         {
+            if (IsCompleted)
+                throw new InvalidOperationException("Chore assignment is already completed.");
+
             CompletedAt = DateTime.UtcNow;
             SetUpdatedAt();
         }

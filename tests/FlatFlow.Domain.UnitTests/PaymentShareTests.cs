@@ -187,5 +187,49 @@ namespace FlatFlow.Domain.UnitTests
             share.PaymentId.Should().Be(_paymentId);
             share.ShareAmount.Should().Be(75.50m);
         }
+
+        [Fact]
+        public void MarkAsPartial_WhenAlreadyPaid_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+            share.MarkAsPaid();
+
+            // Act
+            var act = () => share.MarkAsPartial();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("Cannot mark a paid share as partial.");
+        }
+
+        [Fact]
+        public void MarkAsPaid_WhenAlreadyPaid_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+            share.MarkAsPaid();
+
+            // Act
+            var act = () => share.MarkAsPaid();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("Payment share is already paid.");
+        }
+
+        [Fact]
+        public void MarkAsPaid_WhenPartial_SetsStatusToPaid()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+            share.MarkAsPartial();
+
+            // Act
+            share.MarkAsPaid();
+
+            // Assert
+            share.Status.Should().Be(PaymentShareStatus.Paid);
+        }
     }
 }

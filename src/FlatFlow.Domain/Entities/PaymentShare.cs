@@ -26,12 +26,18 @@ namespace FlatFlow.Domain.Entities
 
         public void MarkAsPartial()
         {
+            if (Status == PaymentShareStatus.Paid)
+                throw new InvalidOperationException("Cannot mark a paid share as partial.");
+
             Status = PaymentShareStatus.Partial;
             SetUpdatedAt();
         }
 
         public void MarkAsPaid()
         {
+            if (Status == PaymentShareStatus.Paid)
+                throw new InvalidOperationException("Payment share is already paid.");
+
             Status = PaymentShareStatus.Paid;
             SetUpdatedAt();
         }

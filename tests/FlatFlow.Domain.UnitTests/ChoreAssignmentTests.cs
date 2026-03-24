@@ -187,5 +187,43 @@ namespace FlatFlow.Domain.UnitTests
             assignment.TenantId.Should().Be(_tenantId);
             assignment.ChoreId.Should().Be(_choreId);
         }
+
+        [Fact]
+        public void Complete_WhenAlreadyCompleted_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var assignment = CreateAssignment();
+            assignment.Complete();
+
+            // Act
+            var act = () => assignment.Complete();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("Chore assignment is already completed.");
+        }
+
+        [Fact]
+        public void IsCompleted_WhenNotCompleted_ReturnsFalse()
+        {
+            // Arrange & Act
+            var assignment = CreateAssignment();
+
+            // Assert
+            assignment.IsCompleted.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsCompleted_WhenCompleted_ReturnsTrue()
+        {
+            // Arrange
+            var assignment = CreateAssignment();
+
+            // Act
+            assignment.Complete();
+
+            // Assert
+            assignment.IsCompleted.Should().BeTrue();
+        }
     }
 }
