@@ -50,5 +50,19 @@ namespace FlatFlow.Domain.Entities
             Frequency = frequency;
             SetUpdatedAt();
         }
+
+        public ChoreAssignment AddAssignment(Guid tenantId, DateTime dueDate)
+        {
+            var assignment = new ChoreAssignment(tenantId, Id, dueDate);
+            ChoreAssignments.Add(assignment);
+            return assignment;
+        }
+
+        public void RemoveAssignment(Guid assignmentId)
+        {
+            var assignment = ChoreAssignments.FirstOrDefault(a => a.Id == assignmentId)
+                ?? throw new DomainException($"Chore assignment with ID '{assignmentId}' not found.");
+            ChoreAssignments.Remove(assignment);
+        }
     }
 }

@@ -298,5 +298,84 @@ namespace FlatFlow.Domain.UnitTests
             act.Should().Throw<DomainValidationException>()
                 .WithMessage("Payment amount must be greater than zero.");
         }
+
+        // --- AddShare ---
+
+        [Fact]
+        public void AddShare_WithValidData_ReturnsShareAndAddsToCollection()
+        {
+            // Arrange
+            var payment = CreatePayment();
+            var tenantId = Guid.NewGuid();
+
+            // Act
+            var share = payment.AddShare(tenantId, 50m);
+
+            // Assert
+            share.Should().NotBeNull();
+            share.TenantId.Should().Be(tenantId);
+            share.ShareAmount.Should().Be(50m);
+            share.PaymentId.Should().Be(payment.Id);
+            payment.PaymentShares.Should().ContainSingle().Which.Should().Be(share);
+        }
+
+        [Fact]
+        public void AddShare_WithEmptyTenantId_ThrowsDomainValidationException()
+        {
+            // Arrange
+            var payment = CreatePayment();
+
+            // Act
+            var act = () => payment.AddShare(Guid.Empty, 50m);
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Tenant ID cannot be empty.");
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void AddShare_WithInvalidAmount_ThrowsDomainValidationException(decimal amount)
+        {
+            // Arrange
+            var payment = CreatePayment();
+
+            // Act
+            var act = () => payment.AddShare(Guid.NewGuid(), amount);
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Share amount must be greater than zero.");
+        }
+
+        // --- RemoveShare ---
+
+        [Fact]
+        public void RemoveShare_WithExistingId_RemovesFromCollection()
+        {
+            // Arrange
+            var payment = CreatePayment();
+            var share = payment.AddShare(Guid.NewGuid(), 50m);
+
+            // Act
+            payment.RemoveShare(share.Id);
+
+            // Assert
+            payment.PaymentShares.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveShare_WithNonExistingId_ThrowsDomainException()
+        {
+            // Arrange
+            var payment = CreatePayment();
+
+            // Act
+            var act = () => payment.RemoveShare(Guid.NewGuid());
+
+            // Assert
+            act.Should().Throw<DomainException>();
+        }
     }
 }

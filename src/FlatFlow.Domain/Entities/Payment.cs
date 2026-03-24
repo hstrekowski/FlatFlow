@@ -60,5 +60,19 @@ namespace FlatFlow.Domain.Entities
             DueDate = dueDate;
             SetUpdatedAt();
         }
+
+        public PaymentShare AddShare(Guid tenantId, decimal shareAmount)
+        {
+            var share = new PaymentShare(tenantId, Id, shareAmount);
+            PaymentShares.Add(share);
+            return share;
+        }
+
+        public void RemoveShare(Guid shareId)
+        {
+            var share = PaymentShares.FirstOrDefault(s => s.Id == shareId)
+                ?? throw new DomainException($"Payment share with ID '{shareId}' not found.");
+            PaymentShares.Remove(share);
+        }
     }
 }

@@ -1,4 +1,5 @@
 using FlatFlow.Domain.Common;
+using FlatFlow.Domain.Enums;
 using FlatFlow.Domain.Exceptions;
 using FlatFlow.Domain.ValueObjects;
 
@@ -54,6 +55,62 @@ namespace FlatFlow.Domain.Entities
         {
             AccessCode = GenerateAccessCode();
             SetUpdatedAt();
+        }
+
+        public Tenant AddTenant(string firstName, string lastName, string email, string userId, bool isOwner = false)
+        {
+            var tenant = new Tenant(firstName, lastName, email, userId, Id, isOwner);
+            Tenants.Add(tenant);
+            return tenant;
+        }
+
+        public void RemoveTenant(Guid tenantId)
+        {
+            var tenant = Tenants.FirstOrDefault(t => t.Id == tenantId)
+                ?? throw new DomainException($"Tenant with ID '{tenantId}' not found.");
+            Tenants.Remove(tenant);
+        }
+
+        public Chore AddChore(string title, string description, ChoreFrequency frequency)
+        {
+            var chore = new Chore(title, description, frequency, Id);
+            Chores.Add(chore);
+            return chore;
+        }
+
+        public void RemoveChore(Guid choreId)
+        {
+            var chore = Chores.FirstOrDefault(c => c.Id == choreId)
+                ?? throw new DomainException($"Chore with ID '{choreId}' not found.");
+            Chores.Remove(chore);
+        }
+
+        public Note AddNote(string title, string content, Guid authorId)
+        {
+            var note = new Note(title, content, Id, authorId);
+            Notes.Add(note);
+            return note;
+        }
+
+        public void RemoveNote(Guid noteId)
+        {
+            var note = Notes.FirstOrDefault(n => n.Id == noteId)
+                ?? throw new DomainException($"Note with ID '{noteId}' not found.");
+            Notes.Remove(note);
+        }
+
+        public Payment AddPayment(string title, decimal amount, DateTime dueDate, Guid createdById)
+        {
+            var payment = new Payment(title, amount, dueDate, Id, createdById);
+            Payments.Add(payment);
+            return payment;
+        }
+
+        public void RemovePayment(Guid paymentId)
+        {
+            var payment = Payments.FirstOrDefault(p => p.Id == paymentId)
+                ?? throw new DomainException($"Payment with ID '{paymentId}' not found.");
+            Payments.Remove(payment);
         }
     }
 }
