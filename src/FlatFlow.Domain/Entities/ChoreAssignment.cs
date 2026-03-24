@@ -38,5 +38,14 @@ namespace FlatFlow.Domain.Entities
             CompletedAt = DateTime.UtcNow;
             SetUpdatedAt();
         }
+
+        public void Reopen()
+        {
+            if (!IsCompleted)
+                throw new InvalidOperationException("Chore assignment is not completed.");
+
+            CompletedAt = null;
+            SetUpdatedAt();
+        }
     }
 }

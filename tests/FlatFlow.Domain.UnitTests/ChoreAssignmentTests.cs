@@ -225,5 +225,51 @@ namespace FlatFlow.Domain.UnitTests
             // Assert
             assignment.IsCompleted.Should().BeTrue();
         }
+
+        [Fact]
+        public void Reopen_WhenCompleted_SetsCompletedAtToNull()
+        {
+            // Arrange
+            var assignment = CreateAssignment();
+            assignment.Complete();
+
+            // Act
+            assignment.Reopen();
+
+            // Assert
+            assignment.CompletedAt.Should().BeNull();
+            assignment.IsCompleted.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Reopen_WhenCompleted_SetsUpdatedAt()
+        {
+            // Arrange
+            var assignment = CreateAssignment();
+            assignment.Complete();
+            var before = DateTime.UtcNow;
+
+            // Act
+            assignment.Reopen();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            assignment.UpdatedAt.Should().NotBeNull();
+            assignment.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
+        public void Reopen_WhenNotCompleted_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var assignment = CreateAssignment();
+
+            // Act
+            var act = () => assignment.Reopen();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("Chore assignment is not completed.");
+        }
     }
 }
