@@ -27,10 +27,20 @@ namespace FlatFlow.Domain.Entities
             CreatedById = createdById;
         }
 
-        public void Update(string title, decimal amount, DateTime dueDate)
+        public void UpdateTitle(string title)
         {
             Title = title;
+            SetUpdatedAt();
+        }
+
+        public void UpdateAmount(decimal amount)
+        {
             Amount = amount;
+            SetUpdatedAt();
+        }
+
+        public void UpdateDueDate(DateTime dueDate)
+        {
             DueDate = dueDate;
             SetUpdatedAt();
         }

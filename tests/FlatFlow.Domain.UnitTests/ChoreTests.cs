@@ -116,31 +116,30 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Theory]
-        [InlineData("New Title", "New Description", ChoreFrequency.Daily)]
-        [InlineData("Updated", "", ChoreFrequency.Monthly)]
-        public void Update_WithNewValues_ChangesProperties(string title, string description, ChoreFrequency frequency)
+        [InlineData("New Title")]
+        [InlineData("Updated")]
+        [InlineData("")]
+        public void UpdateTitle_WithNewValue_ChangesTitle(string title)
         {
             // Arrange
             var chore = CreateChore();
 
             // Act
-            chore.Update(title, description, frequency);
+            chore.UpdateTitle(title);
 
             // Assert
             chore.Title.Should().Be(title);
-            chore.Description.Should().Be(description);
-            chore.Frequency.Should().Be(frequency);
         }
 
         [Fact]
-        public void Update_WhenCalled_SetsUpdatedAt()
+        public void UpdateTitle_WhenCalled_SetsUpdatedAt()
         {
             // Arrange
             var chore = CreateChore();
             var before = DateTime.UtcNow;
 
             // Act
-            chore.Update("New", "New desc", ChoreFrequency.Monthly);
+            chore.UpdateTitle("New");
             var after = DateTime.UtcNow;
 
             // Assert
@@ -148,17 +147,67 @@ namespace FlatFlow.Domain.UnitTests
             chore.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
-        [Fact]
-        public void Update_WhenCalled_DoesNotChangeOtherProperties()
+        [Theory]
+        [InlineData("New Description")]
+        [InlineData("")]
+        public void UpdateDescription_WithNewValue_ChangesDescription(string description)
         {
             // Arrange
             var chore = CreateChore();
 
             // Act
-            chore.Update("New", "New desc", ChoreFrequency.Monthly);
+            chore.UpdateDescription(description);
 
             // Assert
-            chore.FlatId.Should().Be(_flatId);
+            chore.Description.Should().Be(description);
+        }
+
+        [Fact]
+        public void UpdateDescription_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var chore = CreateChore();
+            var before = DateTime.UtcNow;
+
+            // Act
+            chore.UpdateDescription("New desc");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            chore.UpdatedAt.Should().NotBeNull();
+            chore.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData(ChoreFrequency.Once)]
+        [InlineData(ChoreFrequency.Daily)]
+        [InlineData(ChoreFrequency.Monthly)]
+        public void UpdateFrequency_WithNewValue_ChangesFrequency(ChoreFrequency frequency)
+        {
+            // Arrange
+            var chore = CreateChore();
+
+            // Act
+            chore.UpdateFrequency(frequency);
+
+            // Assert
+            chore.Frequency.Should().Be(frequency);
+        }
+
+        [Fact]
+        public void UpdateFrequency_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var chore = CreateChore();
+            var before = DateTime.UtcNow;
+
+            // Act
+            chore.UpdateFrequency(ChoreFrequency.Monthly);
+            var after = DateTime.UtcNow;
+
+            // Assert
+            chore.UpdatedAt.Should().NotBeNull();
+            chore.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
     }
 }

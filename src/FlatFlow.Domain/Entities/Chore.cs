@@ -24,10 +24,20 @@ namespace FlatFlow.Domain.Entities
             FlatId = flatId;
         }
 
-        public void Update(string title, string description, ChoreFrequency frequency)
+        public void UpdateTitle(string title)
         {
             Title = title;
+            SetUpdatedAt();
+        }
+
+        public void UpdateDescription(string description)
+        {
             Description = description;
+            SetUpdatedAt();
+        }
+
+        public void UpdateFrequency(ChoreFrequency frequency)
+        {
             Frequency = frequency;
             SetUpdatedAt();
         }

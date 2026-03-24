@@ -102,19 +102,50 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Theory]
-        [InlineData("New Title", "New Content")]
-        [InlineData("Updated", "Updated content here")]
-        [InlineData("", "")]
-        public void UpdateContent_WithNewValues_ChangesTitleAndContent(string title, string content)
+        [InlineData("New Title")]
+        [InlineData("Updated")]
+        [InlineData("")]
+        public void UpdateTitle_WithNewValue_ChangesTitle(string title)
         {
             // Arrange
             var note = CreateNote();
 
             // Act
-            note.UpdateContent(title, content);
+            note.UpdateTitle(title);
 
             // Assert
             note.Title.Should().Be(title);
+        }
+
+        [Fact]
+        public void UpdateTitle_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var note = CreateNote();
+            var before = DateTime.UtcNow;
+
+            // Act
+            note.UpdateTitle("New Title");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            note.UpdatedAt.Should().NotBeNull();
+            note.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData("New Content")]
+        [InlineData("Updated content here")]
+        [InlineData("")]
+        public void UpdateContent_WithNewValue_ChangesContent(string content)
+        {
+            // Arrange
+            var note = CreateNote();
+
+            // Act
+            note.UpdateContent(content);
+
+            // Assert
             note.Content.Should().Be(content);
         }
 
@@ -126,26 +157,12 @@ namespace FlatFlow.Domain.UnitTests
             var before = DateTime.UtcNow;
 
             // Act
-            note.UpdateContent("New Title", "New Content");
+            note.UpdateContent("New Content");
             var after = DateTime.UtcNow;
 
             // Assert
             note.UpdatedAt.Should().NotBeNull();
             note.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
-        }
-
-        [Fact]
-        public void UpdateContent_WhenCalled_DoesNotChangeOtherProperties()
-        {
-            // Arrange
-            var note = CreateNote();
-
-            // Act
-            note.UpdateContent("New Title", "New Content");
-
-            // Assert
-            note.FlatId.Should().Be(_flatId);
-            note.AuthorId.Should().Be(_authorId);
         }
     }
 }

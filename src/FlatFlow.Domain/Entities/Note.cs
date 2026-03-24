@@ -23,9 +23,14 @@ namespace FlatFlow.Domain.Entities
             AuthorId = authorId;
         }
 
-        public void UpdateContent(string title, string content)
+        public void UpdateTitle(string title)
         {
             Title = title;
+            SetUpdatedAt();
+        }
+
+        public void UpdateContent(string content)
+        {
             Content = content;
             SetUpdatedAt();
         }

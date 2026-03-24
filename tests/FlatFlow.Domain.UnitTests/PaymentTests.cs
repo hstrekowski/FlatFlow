@@ -124,30 +124,62 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Theory]
-        [InlineData("New Title", 200.00)]
-        [InlineData("Updated", 0)]
-        public void Update_WithNewValues_ChangesTitleAndAmount(string title, decimal amount)
+        [InlineData("New Title")]
+        [InlineData("Updated")]
+        [InlineData("")]
+        public void UpdateTitle_WithNewValue_ChangesTitle(string title)
         {
             // Arrange
             var payment = CreatePayment();
 
             // Act
-            payment.Update(title, amount, _dueDate.AddDays(7));
+            payment.UpdateTitle(title);
 
             // Assert
             payment.Title.Should().Be(title);
-            payment.Amount.Should().Be(amount);
         }
 
         [Fact]
-        public void Update_WhenCalled_SetsUpdatedAt()
+        public void UpdateTitle_WhenCalled_SetsUpdatedAt()
         {
             // Arrange
             var payment = CreatePayment();
             var before = DateTime.UtcNow;
 
             // Act
-            payment.Update("New Title", 200m, _dueDate.AddDays(7));
+            payment.UpdateTitle("New Title");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            payment.UpdatedAt.Should().NotBeNull();
+            payment.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(200.00)]
+        [InlineData(999.99)]
+        public void UpdateAmount_WithNewValue_ChangesAmount(decimal amount)
+        {
+            // Arrange
+            var payment = CreatePayment();
+
+            // Act
+            payment.UpdateAmount(amount);
+
+            // Assert
+            payment.Amount.Should().Be(amount);
+        }
+
+        [Fact]
+        public void UpdateAmount_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var payment = CreatePayment();
+            var before = DateTime.UtcNow;
+
+            // Act
+            payment.UpdateAmount(200m);
             var after = DateTime.UtcNow;
 
             // Assert
@@ -156,17 +188,33 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
-        public void Update_WhenCalled_DoesNotChangeOtherProperties()
+        public void UpdateDueDate_WithNewValue_ChangesDueDate()
         {
             // Arrange
             var payment = CreatePayment();
+            var newDueDate = _dueDate.AddDays(7);
 
             // Act
-            payment.Update("New", 999m, _dueDate);
+            payment.UpdateDueDate(newDueDate);
 
             // Assert
-            payment.FlatId.Should().Be(_flatId);
-            payment.CreatedById.Should().Be(_createdById);
+            payment.DueDate.Should().Be(newDueDate);
+        }
+
+        [Fact]
+        public void UpdateDueDate_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var payment = CreatePayment();
+            var before = DateTime.UtcNow;
+
+            // Act
+            payment.UpdateDueDate(_dueDate.AddDays(7));
+            var after = DateTime.UtcNow;
+
+            // Assert
+            payment.UpdatedAt.Should().NotBeNull();
+            payment.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
     }
 }
