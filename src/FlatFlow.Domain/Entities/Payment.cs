@@ -1,4 +1,5 @@
 using FlatFlow.Domain.Common;
+using FlatFlow.Domain.Exceptions;
 
 namespace FlatFlow.Domain.Entities
 {
@@ -21,13 +22,13 @@ namespace FlatFlow.Domain.Entities
         public Payment(string title, decimal amount, DateTime dueDate, Guid flatId, Guid createdById) : base()
         {
             if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentException("Payment title cannot be empty.", nameof(title));
+                throw new DomainValidationException("Payment title cannot be empty.", nameof(title));
             if (amount <= 0)
-                throw new ArgumentException("Payment amount must be greater than zero.", nameof(amount));
+                throw new DomainValidationException("Payment amount must be greater than zero.", nameof(amount));
             if (flatId == Guid.Empty)
-                throw new ArgumentException("Flat ID cannot be empty.", nameof(flatId));
+                throw new DomainValidationException("Flat ID cannot be empty.", nameof(flatId));
             if (createdById == Guid.Empty)
-                throw new ArgumentException("Created by ID cannot be empty.", nameof(createdById));
+                throw new DomainValidationException("Created by ID cannot be empty.", nameof(createdById));
 
             Title = title;
             Amount = amount;
@@ -39,7 +40,7 @@ namespace FlatFlow.Domain.Entities
         public void UpdateTitle(string title)
         {
             if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentException("Payment title cannot be empty.", nameof(title));
+                throw new DomainValidationException("Payment title cannot be empty.", nameof(title));
 
             Title = title;
             SetUpdatedAt();
@@ -48,7 +49,7 @@ namespace FlatFlow.Domain.Entities
         public void UpdateAmount(decimal amount)
         {
             if (amount <= 0)
-                throw new ArgumentException("Payment amount must be greater than zero.", nameof(amount));
+                throw new DomainValidationException("Payment amount must be greater than zero.", nameof(amount));
 
             Amount = amount;
             SetUpdatedAt();

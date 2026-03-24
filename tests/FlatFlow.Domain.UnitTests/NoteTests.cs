@@ -1,4 +1,5 @@
 using FlatFlow.Domain.Entities;
+using FlatFlow.Domain.Exceptions;
 using FluentAssertions;
 
 namespace FlatFlow.Domain.UnitTests
@@ -168,43 +169,43 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidTitle_ThrowsArgumentException(string? title)
+        public void Constructor_WithInvalidTitle_ThrowsDomainValidationException(string? title)
         {
             // Arrange & Act
             var act = () => new Note(title!, "Content", _flatId, _authorId);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Note title cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Note title cannot be empty.");
         }
 
         [Fact]
-        public void Constructor_WithEmptyFlatId_ThrowsArgumentException()
+        public void Constructor_WithEmptyFlatId_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new Note("Title", "Content", Guid.Empty, _authorId);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Flat ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Flat ID cannot be empty.");
         }
 
         [Fact]
-        public void Constructor_WithEmptyAuthorId_ThrowsArgumentException()
+        public void Constructor_WithEmptyAuthorId_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new Note("Title", "Content", _flatId, Guid.Empty);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Author ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Author ID cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void UpdateTitle_WithInvalidTitle_ThrowsArgumentException(string? title)
+        public void UpdateTitle_WithInvalidTitle_ThrowsDomainValidationException(string? title)
         {
             // Arrange
             var note = CreateNote();
@@ -213,8 +214,8 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => note.UpdateTitle(title!);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Note title cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Note title cannot be empty.");
         }
     }
 }

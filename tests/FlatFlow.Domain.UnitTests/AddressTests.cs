@@ -1,3 +1,4 @@
+using FlatFlow.Domain.Exceptions;
 using FlatFlow.Domain.ValueObjects;
 using FluentAssertions;
 
@@ -22,56 +23,56 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidStreet_ThrowsArgumentException(string? street)
+        public void Constructor_WithInvalidStreet_ThrowsDomainValidationException(string? street)
         {
             // Arrange & Act
             var act = () => new Address(street!, "Warsaw", "00-001", "Poland");
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Street cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Street cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidCity_ThrowsArgumentException(string? city)
+        public void Constructor_WithInvalidCity_ThrowsDomainValidationException(string? city)
         {
             // Arrange & Act
             var act = () => new Address("Main St 1", city!, "00-001", "Poland");
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("City cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("City cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidZipCode_ThrowsArgumentException(string? zipCode)
+        public void Constructor_WithInvalidZipCode_ThrowsDomainValidationException(string? zipCode)
         {
             // Arrange & Act
             var act = () => new Address("Main St 1", "Warsaw", zipCode!, "Poland");
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Zip code cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Zip code cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidCountry_ThrowsArgumentException(string? country)
+        public void Constructor_WithInvalidCountry_ThrowsDomainValidationException(string? country)
         {
             // Arrange & Act
             var act = () => new Address("Main St 1", "Warsaw", "00-001", country!);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Country cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Country cannot be empty.");
         }
 
         [Fact]

@@ -1,4 +1,5 @@
 using FlatFlow.Domain.Entities;
+using FlatFlow.Domain.Exceptions;
 using FlatFlow.Domain.ValueObjects;
 using FluentAssertions;
 
@@ -219,31 +220,32 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidName_ThrowsArgumentException(string? name)
+        public void Constructor_WithInvalidName_ThrowsDomainValidationException(string? name)
         {
             // Arrange & Act
             var act = () => new Flat(name!, _validAddress);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Flat name cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Flat name cannot be empty.");
         }
 
         [Fact]
-        public void Constructor_WithNullAddress_ThrowsArgumentNullException()
+        public void Constructor_WithNullAddress_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new Flat("My Flat", null!);
 
             // Assert
-            act.Should().Throw<ArgumentNullException>();
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Address cannot be null.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void UpdateName_WithInvalidName_ThrowsArgumentException(string? name)
+        public void UpdateName_WithInvalidName_ThrowsDomainValidationException(string? name)
         {
             // Arrange
             var flat = new Flat("My Flat", _validAddress);
@@ -252,12 +254,12 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => flat.UpdateName(name!);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Flat name cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Flat name cannot be empty.");
         }
 
         [Fact]
-        public void UpdateAddress_WithNull_ThrowsArgumentNullException()
+        public void UpdateAddress_WithNull_ThrowsDomainValidationException()
         {
             // Arrange
             var flat = new Flat("My Flat", _validAddress);
@@ -266,7 +268,8 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => flat.UpdateAddress(null!);
 
             // Assert
-            act.Should().Throw<ArgumentNullException>();
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Address cannot be null.");
         }
     }
 }

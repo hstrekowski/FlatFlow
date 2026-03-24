@@ -1,4 +1,5 @@
 using FlatFlow.Domain.Entities;
+using FlatFlow.Domain.Exceptions;
 using FluentAssertions;
 
 namespace FlatFlow.Domain.UnitTests
@@ -243,7 +244,7 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
-        public void PromoteToOwner_WhenAlreadyOwner_ThrowsInvalidOperationException()
+        public void PromoteToOwner_WhenAlreadyOwner_ThrowsDomainException()
         {
             // Arrange
             var tenant = CreateTenant(isOwner: true);
@@ -252,7 +253,7 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => tenant.PromoteToOwner();
 
             // Assert
-            act.Should().Throw<InvalidOperationException>()
+            act.Should().Throw<DomainException>()
                 .WithMessage("Tenant is already an owner.");
         }
 
@@ -286,7 +287,7 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
-        public void RevokeOwnership_WhenNotOwner_ThrowsInvalidOperationException()
+        public void RevokeOwnership_WhenNotOwner_ThrowsDomainException()
         {
             // Arrange
             var tenant = CreateTenant(isOwner: false);
@@ -295,7 +296,7 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => tenant.RevokeOwnership();
 
             // Assert
-            act.Should().Throw<InvalidOperationException>()
+            act.Should().Throw<DomainException>()
                 .WithMessage("Tenant is not an owner.");
         }
 
@@ -303,74 +304,74 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidFirstName_ThrowsArgumentException(string? firstName)
+        public void Constructor_WithInvalidFirstName_ThrowsDomainValidationException(string? firstName)
         {
             // Arrange & Act
             var act = () => new Tenant(firstName!, "Doe", "john@example.com", _userId, _flatId);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("First name cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("First name cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidLastName_ThrowsArgumentException(string? lastName)
+        public void Constructor_WithInvalidLastName_ThrowsDomainValidationException(string? lastName)
         {
             // Arrange & Act
             var act = () => new Tenant("John", lastName!, "john@example.com", _userId, _flatId);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Last name cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Last name cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidEmail_ThrowsArgumentException(string? email)
+        public void Constructor_WithInvalidEmail_ThrowsDomainValidationException(string? email)
         {
             // Arrange & Act
             var act = () => new Tenant("John", "Doe", email!, _userId, _flatId);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Email cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Email cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidUserId_ThrowsArgumentException(string? userId)
+        public void Constructor_WithInvalidUserId_ThrowsDomainValidationException(string? userId)
         {
             // Arrange & Act
             var act = () => new Tenant("John", "Doe", "john@example.com", userId!, _flatId);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("User ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("User ID cannot be empty.");
         }
 
         [Fact]
-        public void Constructor_WithEmptyFlatId_ThrowsArgumentException()
+        public void Constructor_WithEmptyFlatId_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new Tenant("John", "Doe", "john@example.com", _userId, Guid.Empty);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Flat ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Flat ID cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void UpdateProfile_WithInvalidFirstName_ThrowsArgumentException(string? firstName)
+        public void UpdateProfile_WithInvalidFirstName_ThrowsDomainValidationException(string? firstName)
         {
             // Arrange
             var tenant = CreateTenant();
@@ -379,15 +380,15 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => tenant.UpdateProfile(firstName!, "Smith");
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("First name cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("First name cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void UpdateProfile_WithInvalidLastName_ThrowsArgumentException(string? lastName)
+        public void UpdateProfile_WithInvalidLastName_ThrowsDomainValidationException(string? lastName)
         {
             // Arrange
             var tenant = CreateTenant();
@@ -396,15 +397,15 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => tenant.UpdateProfile("Jane", lastName!);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Last name cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Last name cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void UpdateEmail_WithInvalidEmail_ThrowsArgumentException(string? email)
+        public void UpdateEmail_WithInvalidEmail_ThrowsDomainValidationException(string? email)
         {
             // Arrange
             var tenant = CreateTenant();
@@ -413,8 +414,8 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => tenant.UpdateEmail(email!);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Email cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Email cannot be empty.");
         }
     }
 }
