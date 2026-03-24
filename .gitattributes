@@ -1,0 +1,24 @@
+* text=auto
+
+*.cs     text diff=csharp
+*.csproj text
+*.sln    text eol=crlf
+*.json   text
+*.ts     text
+*.html   text
+*.scss   text
+*.css    text
+*.js     text
+*.md     text
+*.slnx   text eol=crlf
+
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.svg    text
+
+.gitignore      export-ignore
+.gitattributes   export-ignore

@@ -1,0 +1,43 @@
+## --- .NET / Visual Studio ---
+[Bb]in/
+[Oo]bj/
+out/
+.vs/
+.vscode/
+.idea/
+*.user
+*.userosscache
+*.sln.docstates
+TestResults/
+*.sublime-project
+*.sublime-workspace
+
+## --- Node / Angular (folder client) ---
+client/node_modules/
+client/.angular/
+client/dist/
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+client/.swp
+client/*.log
+
+## --- OS Generated Files ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## --- User Specific / Secrets ---
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*.local
+
+## --- Testing ---
+*.VisualState.xml
+_ReSharper*/
+*.[Rr]e[Ss]harper
