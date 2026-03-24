@@ -17,8 +17,10 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData("X", "Y")]
         public void Constructor_WithValidNames_SetsFirstAndLastName(string firstName, string lastName)
         {
+            // Arrange & Act
             var tenant = new Tenant(firstName, lastName, "test@example.com", _userId, _flatId);
 
+            // Assert
             tenant.FirstName.Should().Be(firstName);
             tenant.LastName.Should().Be(lastName);
         }
@@ -26,42 +28,54 @@ namespace FlatFlow.Domain.UnitTests
         [Fact]
         public void Constructor_WithValidEmail_SetsEmail()
         {
+            // Arrange & Act
             var tenant = CreateTenant();
 
+            // Assert
             tenant.Email.Should().Be("john@example.com");
         }
 
         [Fact]
         public void Constructor_WithUserId_SetsUserId()
         {
+            // Arrange & Act
             var tenant = CreateTenant();
 
+            // Assert
             tenant.UserId.Should().Be(_userId);
         }
 
         [Fact]
         public void Constructor_WithFlatId_SetsFlatId()
         {
+            // Arrange & Act
             var tenant = CreateTenant();
 
+            // Assert
             tenant.FlatId.Should().Be(_flatId);
         }
 
         [Fact]
         public void Constructor_WhenCalled_GeneratesNonEmptyId()
         {
+            // Arrange & Act
             var tenant = CreateTenant();
 
+            // Assert
             tenant.Id.Should().NotBeEmpty();
         }
 
         [Fact]
         public void Constructor_WhenCalled_SetsCreatedAtToUtcNow()
         {
+            // Arrange
             var before = DateTime.UtcNow;
+
+            // Act
             var tenant = CreateTenant();
             var after = DateTime.UtcNow;
 
+            // Assert
             tenant.CreatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
@@ -70,24 +84,30 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData(true)]
         public void Constructor_WithIsOwnerFlag_SetsIsOwner(bool isOwner)
         {
+            // Arrange & Act
             var tenant = CreateTenant(isOwner);
 
+            // Assert
             tenant.IsOwner.Should().Be(isOwner);
         }
 
         [Fact]
         public void Constructor_WithoutIsOwnerFlag_DefaultsToFalse()
         {
+            // Arrange & Act
             var tenant = new Tenant("John", "Doe", "john@example.com", _userId, _flatId);
 
+            // Assert
             tenant.IsOwner.Should().BeFalse();
         }
 
         [Fact]
         public void Constructor_WhenCalled_InitializesEmptyCollections()
         {
+            // Arrange & Act
             var tenant = CreateTenant();
 
+            // Assert
             tenant.ChoreAssignments.Should().BeEmpty();
             tenant.PaymentShares.Should().BeEmpty();
         }
@@ -95,9 +115,11 @@ namespace FlatFlow.Domain.UnitTests
         [Fact]
         public void Constructor_WhenCalledTwice_GeneratesUniqueIds()
         {
+            // Arrange & Act
             var tenant1 = CreateTenant();
             var tenant2 = CreateTenant();
 
+            // Assert
             tenant1.Id.Should().NotBe(tenant2.Id);
         }
 
@@ -107,10 +129,13 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData("", "")]
         public void UpdateProfile_WithNewNames_ChangesFirstAndLastName(string firstName, string lastName)
         {
+            // Arrange
             var tenant = CreateTenant();
 
+            // Act
             tenant.UpdateProfile(firstName, lastName);
 
+            // Assert
             tenant.FirstName.Should().Be(firstName);
             tenant.LastName.Should().Be(lastName);
         }
@@ -118,10 +143,13 @@ namespace FlatFlow.Domain.UnitTests
         [Fact]
         public void UpdateProfile_WhenCalled_DoesNotChangeOtherProperties()
         {
+            // Arrange
             var tenant = CreateTenant();
 
+            // Act
             tenant.UpdateProfile("Jane", "Smith");
 
+            // Assert
             tenant.Email.Should().Be("john@example.com");
             tenant.UserId.Should().Be(_userId);
             tenant.FlatId.Should().Be(_flatId);
@@ -132,10 +160,13 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData("updated@test.org")]
         public void UpdateEmail_WithNewEmail_ChangesEmail(string newEmail)
         {
+            // Arrange
             var tenant = CreateTenant();
 
+            // Act
             tenant.UpdateEmail(newEmail);
 
+            // Assert
             tenant.Email.Should().Be(newEmail);
         }
     }

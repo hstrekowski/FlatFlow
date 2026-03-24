@@ -17,8 +17,10 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData("A")]
         public void Constructor_WithValidTitle_SetsTitle(string title)
         {
+            // Arrange & Act
             var chore = new Chore(title, "Description", ChoreFrequency.Once, _flatId);
 
+            // Assert
             chore.Title.Should().Be(title);
         }
 
@@ -27,8 +29,10 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData("")]
         public void Constructor_WithDescription_SetsDescription(string description)
         {
+            // Arrange & Act
             var chore = new Chore("Title", description, ChoreFrequency.Once, _flatId);
 
+            // Assert
             chore.Description.Should().Be(description);
         }
 
@@ -39,51 +43,65 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData(ChoreFrequency.Monthly)]
         public void Constructor_WithFrequency_SetsFrequency(ChoreFrequency frequency)
         {
+            // Arrange & Act
             var chore = new Chore("Title", "Description", frequency, _flatId);
 
+            // Assert
             chore.Frequency.Should().Be(frequency);
         }
 
         [Fact]
         public void Constructor_WithFlatId_SetsFlatId()
         {
+            // Arrange & Act
             var chore = CreateChore();
 
+            // Assert
             chore.FlatId.Should().Be(_flatId);
         }
 
         [Fact]
         public void Constructor_WhenCalled_GeneratesNonEmptyId()
         {
+            // Arrange & Act
             var chore = CreateChore();
 
+            // Assert
             chore.Id.Should().NotBeEmpty();
         }
 
         [Fact]
         public void Constructor_WhenCalled_SetsCreatedAtToUtcNow()
         {
+            // Arrange
             var before = DateTime.UtcNow;
+
+            // Act
             var chore = CreateChore();
             var after = DateTime.UtcNow;
 
+            // Assert
             chore.CreatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Fact]
         public void Constructor_WhenCalled_InitializesEmptyChoreAssignments()
         {
+            // Arrange & Act
             var chore = CreateChore();
 
+            // Assert
             chore.ChoreAssignments.Should().BeEmpty();
         }
 
         [Fact]
         public void Constructor_WhenCalledTwice_GeneratesUniqueIds()
         {
+            // Arrange & Act
             var chore1 = CreateChore();
             var chore2 = CreateChore();
 
+            // Assert
             chore1.Id.Should().NotBe(chore2.Id);
         }
 
@@ -92,10 +110,13 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData("Updated", "", ChoreFrequency.Monthly)]
         public void Update_WithNewValues_ChangesProperties(string title, string description, ChoreFrequency frequency)
         {
+            // Arrange
             var chore = CreateChore();
 
+            // Act
             chore.Update(title, description, frequency);
 
+            // Assert
             chore.Title.Should().Be(title);
             chore.Description.Should().Be(description);
             chore.Frequency.Should().Be(frequency);
@@ -104,10 +125,13 @@ namespace FlatFlow.Domain.UnitTests
         [Fact]
         public void Update_WhenCalled_DoesNotChangeOtherProperties()
         {
+            // Arrange
             var chore = CreateChore();
 
+            // Act
             chore.Update("New", "New desc", ChoreFrequency.Monthly);
 
+            // Assert
             chore.FlatId.Should().Be(_flatId);
         }
     }
