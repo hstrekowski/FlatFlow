@@ -81,6 +81,16 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var note = CreateNote();
+
+            // Assert
+            note.UpdatedAt.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalledTwice_GeneratesUniqueIds()
         {
             // Arrange & Act
@@ -92,34 +102,119 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Theory]
-        [InlineData("New Title", "New Content")]
-        [InlineData("Updated", "Updated content here")]
-        [InlineData("", "")]
-        public void UpdateContent_WithNewValues_ChangesTitleAndContent(string title, string content)
+        [InlineData("New Title")]
+        [InlineData("Updated")]
+        public void UpdateTitle_WithNewValue_ChangesTitle(string title)
         {
             // Arrange
             var note = CreateNote();
 
             // Act
-            note.UpdateContent(title, content);
+            note.UpdateTitle(title);
 
             // Assert
             note.Title.Should().Be(title);
+        }
+
+        [Fact]
+        public void UpdateTitle_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var note = CreateNote();
+            var before = DateTime.UtcNow;
+
+            // Act
+            note.UpdateTitle("New Title");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            note.UpdatedAt.Should().NotBeNull();
+            note.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData("New Content")]
+        [InlineData("Updated content here")]
+        [InlineData("")]
+        public void UpdateContent_WithNewValue_ChangesContent(string content)
+        {
+            // Arrange
+            var note = CreateNote();
+
+            // Act
+            note.UpdateContent(content);
+
+            // Assert
             note.Content.Should().Be(content);
         }
 
         [Fact]
-        public void UpdateContent_WhenCalled_DoesNotChangeOtherProperties()
+        public void UpdateContent_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var note = CreateNote();
+            var before = DateTime.UtcNow;
+
+            // Act
+            note.UpdateContent("New Content");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            note.UpdatedAt.Should().NotBeNull();
+            note.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidTitle_ThrowsArgumentException(string? title)
+        {
+            // Arrange & Act
+            var act = () => new Note(title!, "Content", _flatId, _authorId);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Note title cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyFlatId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new Note("Title", "Content", Guid.Empty, _authorId);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Flat ID cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyAuthorId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new Note("Title", "Content", _flatId, Guid.Empty);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Author ID cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void UpdateTitle_WithInvalidTitle_ThrowsArgumentException(string? title)
         {
             // Arrange
             var note = CreateNote();
 
             // Act
-            note.UpdateContent("New Title", "New Content");
+            var act = () => note.UpdateTitle(title!);
 
             // Assert
-            note.FlatId.Should().Be(_flatId);
-            note.AuthorId.Should().Be(_authorId);
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Note title cannot be empty.*");
         }
     }
 }

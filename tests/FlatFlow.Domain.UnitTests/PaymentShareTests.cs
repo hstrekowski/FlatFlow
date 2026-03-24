@@ -33,7 +33,6 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
         [InlineData(50.25)]
         [InlineData(1000)]
         public void Constructor_WithValidShareAmount_SetsShareAmount(decimal amount)
@@ -80,6 +79,16 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var share = CreatePaymentShare();
+
+            // Assert
+            share.UpdatedAt.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalledTwice_GeneratesUniqueIds()
         {
             // Arrange & Act
@@ -117,6 +126,38 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void MarkAsPartial_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+            var before = DateTime.UtcNow;
+
+            // Act
+            share.MarkAsPartial();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            share.UpdatedAt.Should().NotBeNull();
+            share.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
+        public void MarkAsPaid_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+            var before = DateTime.UtcNow;
+
+            // Act
+            share.MarkAsPaid();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            share.UpdatedAt.Should().NotBeNull();
+            share.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
         public void MarkAsPaid_WhenCalled_DoesNotChangeOtherProperties()
         {
             // Arrange
@@ -144,6 +185,86 @@ namespace FlatFlow.Domain.UnitTests
             share.TenantId.Should().Be(_tenantId);
             share.PaymentId.Should().Be(_paymentId);
             share.ShareAmount.Should().Be(75.50m);
+        }
+
+        [Fact]
+        public void MarkAsPartial_WhenAlreadyPaid_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+            share.MarkAsPaid();
+
+            // Act
+            var act = () => share.MarkAsPartial();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("Cannot mark a paid share as partial.");
+        }
+
+        [Fact]
+        public void MarkAsPaid_WhenAlreadyPaid_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+            share.MarkAsPaid();
+
+            // Act
+            var act = () => share.MarkAsPaid();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("Payment share is already paid.");
+        }
+
+        [Fact]
+        public void MarkAsPaid_WhenPartial_SetsStatusToPaid()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+            share.MarkAsPartial();
+
+            // Act
+            share.MarkAsPaid();
+
+            // Assert
+            share.Status.Should().Be(PaymentShareStatus.Paid);
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyTenantId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new PaymentShare(Guid.Empty, _paymentId, 75.50m);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Tenant ID cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyPaymentId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new PaymentShare(_tenantId, Guid.Empty, 75.50m);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Payment ID cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(-50.25)]
+        public void Constructor_WithInvalidShareAmount_ThrowsArgumentException(decimal amount)
+        {
+            // Arrange & Act
+            var act = () => new PaymentShare(_tenantId, _paymentId, amount);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Share amount must be greater than zero.*");
         }
     }
 }

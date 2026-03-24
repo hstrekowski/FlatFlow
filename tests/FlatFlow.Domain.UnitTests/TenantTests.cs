@@ -79,6 +79,16 @@ namespace FlatFlow.Domain.UnitTests
             tenant.CreatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
+        [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var tenant = CreateTenant();
+
+            // Assert
+            tenant.UpdatedAt.Should().BeNull();
+        }
+
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
@@ -128,7 +138,6 @@ namespace FlatFlow.Domain.UnitTests
         [Theory]
         [InlineData("Jane", "Smith")]
         [InlineData("Updated", "Name")]
-        [InlineData("", "")]
         public void UpdateProfile_WithNewNames_ChangesFirstAndLastName(string firstName, string lastName)
         {
             // Arrange
@@ -140,6 +149,22 @@ namespace FlatFlow.Domain.UnitTests
             // Assert
             tenant.FirstName.Should().Be(firstName);
             tenant.LastName.Should().Be(lastName);
+        }
+
+        [Fact]
+        public void UpdateProfile_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var tenant = CreateTenant();
+            var before = DateTime.UtcNow;
+
+            // Act
+            tenant.UpdateProfile("Jane", "Smith");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            tenant.UpdatedAt.Should().NotBeNull();
+            tenant.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Fact]
@@ -157,6 +182,22 @@ namespace FlatFlow.Domain.UnitTests
             tenant.FlatId.Should().Be(_flatId);
         }
 
+        [Fact]
+        public void UpdateEmail_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var tenant = CreateTenant();
+            var before = DateTime.UtcNow;
+
+            // Act
+            tenant.UpdateEmail("new@example.com");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            tenant.UpdatedAt.Should().NotBeNull();
+            tenant.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
         [Theory]
         [InlineData("new@example.com")]
         [InlineData("updated@test.org")]
@@ -170,6 +211,210 @@ namespace FlatFlow.Domain.UnitTests
 
             // Assert
             tenant.Email.Should().Be(newEmail);
+        }
+
+        [Fact]
+        public void PromoteToOwner_WhenNotOwner_SetsIsOwnerToTrue()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: false);
+
+            // Act
+            tenant.PromoteToOwner();
+
+            // Assert
+            tenant.IsOwner.Should().BeTrue();
+        }
+
+        [Fact]
+        public void PromoteToOwner_WhenNotOwner_SetsUpdatedAt()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: false);
+            var before = DateTime.UtcNow;
+
+            // Act
+            tenant.PromoteToOwner();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            tenant.UpdatedAt.Should().NotBeNull();
+            tenant.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
+        public void PromoteToOwner_WhenAlreadyOwner_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: true);
+
+            // Act
+            var act = () => tenant.PromoteToOwner();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("Tenant is already an owner.");
+        }
+
+        [Fact]
+        public void RevokeOwnership_WhenOwner_SetsIsOwnerToFalse()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: true);
+
+            // Act
+            tenant.RevokeOwnership();
+
+            // Assert
+            tenant.IsOwner.Should().BeFalse();
+        }
+
+        [Fact]
+        public void RevokeOwnership_WhenOwner_SetsUpdatedAt()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: true);
+            var before = DateTime.UtcNow;
+
+            // Act
+            tenant.RevokeOwnership();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            tenant.UpdatedAt.Should().NotBeNull();
+            tenant.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
+        public void RevokeOwnership_WhenNotOwner_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: false);
+
+            // Act
+            var act = () => tenant.RevokeOwnership();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("Tenant is not an owner.");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidFirstName_ThrowsArgumentException(string? firstName)
+        {
+            // Arrange & Act
+            var act = () => new Tenant(firstName!, "Doe", "john@example.com", _userId, _flatId);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("First name cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidLastName_ThrowsArgumentException(string? lastName)
+        {
+            // Arrange & Act
+            var act = () => new Tenant("John", lastName!, "john@example.com", _userId, _flatId);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Last name cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidEmail_ThrowsArgumentException(string? email)
+        {
+            // Arrange & Act
+            var act = () => new Tenant("John", "Doe", email!, _userId, _flatId);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Email cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidUserId_ThrowsArgumentException(string? userId)
+        {
+            // Arrange & Act
+            var act = () => new Tenant("John", "Doe", "john@example.com", userId!, _flatId);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("User ID cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyFlatId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new Tenant("John", "Doe", "john@example.com", _userId, Guid.Empty);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Flat ID cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void UpdateProfile_WithInvalidFirstName_ThrowsArgumentException(string? firstName)
+        {
+            // Arrange
+            var tenant = CreateTenant();
+
+            // Act
+            var act = () => tenant.UpdateProfile(firstName!, "Smith");
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("First name cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void UpdateProfile_WithInvalidLastName_ThrowsArgumentException(string? lastName)
+        {
+            // Arrange
+            var tenant = CreateTenant();
+
+            // Act
+            var act = () => tenant.UpdateProfile("Jane", lastName!);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Last name cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void UpdateEmail_WithInvalidEmail_ThrowsArgumentException(string? email)
+        {
+            // Arrange
+            var tenant = CreateTenant();
+
+            // Act
+            var act = () => tenant.UpdateEmail(email!);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Email cannot be empty.*");
         }
     }
 }

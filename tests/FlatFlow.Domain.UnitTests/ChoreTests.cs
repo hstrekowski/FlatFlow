@@ -85,6 +85,16 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var chore = CreateChore();
+
+            // Assert
+            chore.UpdatedAt.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalled_InitializesEmptyChoreAssignments()
         {
             // Arrange & Act
@@ -106,33 +116,139 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Theory]
-        [InlineData("New Title", "New Description", ChoreFrequency.Daily)]
-        [InlineData("Updated", "", ChoreFrequency.Monthly)]
-        public void Update_WithNewValues_ChangesProperties(string title, string description, ChoreFrequency frequency)
+        [InlineData("New Title")]
+        [InlineData("Updated")]
+        public void UpdateTitle_WithNewValue_ChangesTitle(string title)
         {
             // Arrange
             var chore = CreateChore();
 
             // Act
-            chore.Update(title, description, frequency);
+            chore.UpdateTitle(title);
 
             // Assert
             chore.Title.Should().Be(title);
+        }
+
+        [Fact]
+        public void UpdateTitle_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var chore = CreateChore();
+            var before = DateTime.UtcNow;
+
+            // Act
+            chore.UpdateTitle("New");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            chore.UpdatedAt.Should().NotBeNull();
+            chore.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData("New Description")]
+        [InlineData("")]
+        public void UpdateDescription_WithNewValue_ChangesDescription(string description)
+        {
+            // Arrange
+            var chore = CreateChore();
+
+            // Act
+            chore.UpdateDescription(description);
+
+            // Assert
             chore.Description.Should().Be(description);
+        }
+
+        [Fact]
+        public void UpdateDescription_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var chore = CreateChore();
+            var before = DateTime.UtcNow;
+
+            // Act
+            chore.UpdateDescription("New desc");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            chore.UpdatedAt.Should().NotBeNull();
+            chore.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData(ChoreFrequency.Once)]
+        [InlineData(ChoreFrequency.Daily)]
+        [InlineData(ChoreFrequency.Monthly)]
+        public void UpdateFrequency_WithNewValue_ChangesFrequency(ChoreFrequency frequency)
+        {
+            // Arrange
+            var chore = CreateChore();
+
+            // Act
+            chore.UpdateFrequency(frequency);
+
+            // Assert
             chore.Frequency.Should().Be(frequency);
         }
 
         [Fact]
-        public void Update_WhenCalled_DoesNotChangeOtherProperties()
+        public void UpdateFrequency_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var chore = CreateChore();
+            var before = DateTime.UtcNow;
+
+            // Act
+            chore.UpdateFrequency(ChoreFrequency.Monthly);
+            var after = DateTime.UtcNow;
+
+            // Assert
+            chore.UpdatedAt.Should().NotBeNull();
+            chore.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidTitle_ThrowsArgumentException(string? title)
+        {
+            // Arrange & Act
+            var act = () => new Chore(title!, "Description", ChoreFrequency.Once, _flatId);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Chore title cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyFlatId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new Chore("Title", "Description", ChoreFrequency.Once, Guid.Empty);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Flat ID cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void UpdateTitle_WithInvalidTitle_ThrowsArgumentException(string? title)
         {
             // Arrange
             var chore = CreateChore();
 
             // Act
-            chore.Update("New", "New desc", ChoreFrequency.Monthly);
+            var act = () => chore.UpdateTitle(title!);
 
             // Assert
-            chore.FlatId.Should().Be(_flatId);
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Chore title cannot be empty.*");
         }
     }
 }

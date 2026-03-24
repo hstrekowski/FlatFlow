@@ -56,6 +56,16 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_UpdatedAtIsNull()
+        {
+            // Arrange & Act
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Assert
+            flat.UpdatedAt.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalled_GeneratesAccessCodeWith8UppercaseChars()
         {
             // Arrange & Act
@@ -103,7 +113,6 @@ namespace FlatFlow.Domain.UnitTests
         [Theory]
         [InlineData("New Name")]
         [InlineData("Updated Flat")]
-        [InlineData("")]
         public void UpdateName_WithValue_ChangesName(string newName)
         {
             // Arrange
@@ -114,6 +123,22 @@ namespace FlatFlow.Domain.UnitTests
 
             // Assert
             flat.Name.Should().Be(newName);
+        }
+
+        [Fact]
+        public void UpdateName_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var flat = new Flat("Original", _validAddress);
+            var before = DateTime.UtcNow;
+
+            // Act
+            flat.UpdateName("New Name");
+            var after = DateTime.UtcNow;
+
+            // Assert
+            flat.UpdatedAt.Should().NotBeNull();
+            flat.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Fact]
@@ -131,6 +156,23 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void UpdateAddress_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            var newAddress = new Address("New St 5", "Krakow", "30-001", "Poland");
+            var before = DateTime.UtcNow;
+
+            // Act
+            flat.UpdateAddress(newAddress);
+            var after = DateTime.UtcNow;
+
+            // Assert
+            flat.UpdatedAt.Should().NotBeNull();
+            flat.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
         public void RefreshAccessCode_WhenCalled_ChangesAccessCode()
         {
             // Arrange
@@ -145,6 +187,22 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
+        public void RefreshAccessCode_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            var before = DateTime.UtcNow;
+
+            // Act
+            flat.RefreshAccessCode();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            flat.UpdatedAt.Should().NotBeNull();
+            flat.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
         public void RefreshAccessCode_WhenCalled_GeneratesValidAccessCode()
         {
             // Arrange
@@ -155,6 +213,60 @@ namespace FlatFlow.Domain.UnitTests
 
             // Assert
             flat.AccessCode.Should().HaveLength(8).And.BeUpperCased();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidName_ThrowsArgumentException(string? name)
+        {
+            // Arrange & Act
+            var act = () => new Flat(name!, _validAddress);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Flat name cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithNullAddress_ThrowsArgumentNullException()
+        {
+            // Arrange & Act
+            var act = () => new Flat("My Flat", null!);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void UpdateName_WithInvalidName_ThrowsArgumentException(string? name)
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.UpdateName(name!);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Flat name cannot be empty.*");
+        }
+
+        [Fact]
+        public void UpdateAddress_WithNull_ThrowsArgumentNullException()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.UpdateAddress(null!);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>();
         }
     }
 }

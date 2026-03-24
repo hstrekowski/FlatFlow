@@ -1,4 +1,4 @@
-﻿using FlatFlow.Domain.Common;
+using FlatFlow.Domain.Common;
 using FlatFlow.Domain.ValueObjects;
 
 namespace FlatFlow.Domain.Entities
@@ -16,19 +16,27 @@ namespace FlatFlow.Domain.Entities
         protected Flat() : base() { }
         public Flat(string name, Address address) : base()
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Flat name cannot be empty.", nameof(name));
+
             Name = name;
             AccessCode = GenerateAccessCode();
-            Address = address;
+            Address = address ?? throw new ArgumentNullException(nameof(address));
         }
 
         public void UpdateName(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Flat name cannot be empty.", nameof(name));
+
             Name = name;
+            SetUpdatedAt();
         }
 
         public void UpdateAddress(Address address)
         {
-            Address = address;
+            Address = address ?? throw new ArgumentNullException(nameof(address));
+            SetUpdatedAt();
         }
 
         private string GenerateAccessCode()
@@ -39,6 +47,7 @@ namespace FlatFlow.Domain.Entities
         public void RefreshAccessCode()
         {
             AccessCode = GenerateAccessCode();
+            SetUpdatedAt();
         }
     }
 }
