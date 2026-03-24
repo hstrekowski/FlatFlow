@@ -6,6 +6,7 @@ namespace FlatFlow.Domain.Entities
     {
         public string Title { get; private set; } = string.Empty;
         public decimal Amount { get; private set; }
+        public DateTime DueDate { get; private set; }
 
         public Guid FlatId { get; private set; }
         public Flat Flat { get; private set; } = null!;
@@ -17,18 +18,20 @@ namespace FlatFlow.Domain.Entities
 
         protected Payment() : base() { }
 
-        public Payment(string title, decimal amount, Guid flatId, Guid createdById) : base()
+        public Payment(string title, decimal amount, DateTime dueDate, Guid flatId, Guid createdById) : base()
         {
             Title = title;
             Amount = amount;
+            DueDate = dueDate;
             FlatId = flatId;
             CreatedById = createdById;
         }
 
-        public void Update(string title, decimal amount)
+        public void Update(string title, decimal amount, DateTime dueDate)
         {
             Title = title;
             Amount = amount;
+            DueDate = dueDate;
             SetUpdatedAt();
         }
     }

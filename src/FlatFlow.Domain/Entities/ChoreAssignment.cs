@@ -10,14 +10,22 @@ namespace FlatFlow.Domain.Entities
         public Guid ChoreId { get; private set; }
         public Chore Chore { get; private set; } = null!;
 
+        public DateTime DueDate { get; private set; }
         public DateTime? CompletedAt { get; private set; }
 
         protected ChoreAssignment() : base() { }
 
-        public ChoreAssignment(Guid tenantId, Guid choreId) : base()
+        public ChoreAssignment(Guid tenantId, Guid choreId, DateTime dueDate) : base()
         {
             TenantId = tenantId;
             ChoreId = choreId;
+            DueDate = dueDate;
+        }
+
+        public void UpdateDueDate(DateTime dueDate)
+        {
+            DueDate = dueDate;
+            SetUpdatedAt();
         }
 
         public void Complete()

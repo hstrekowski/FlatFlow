@@ -7,9 +7,10 @@ namespace FlatFlow.Domain.UnitTests
     {
         private readonly Guid _flatId = Guid.NewGuid();
         private readonly Guid _createdById = Guid.NewGuid();
+        private readonly DateTime _dueDate = DateTime.UtcNow.AddDays(30);
 
         private Payment CreatePayment()
-            => new("Electricity bill", 150.50m, _flatId, _createdById);
+            => new("Electricity bill", 150.50m, _dueDate, _flatId, _createdById);
 
         [Theory]
         [InlineData("Electricity bill")]
@@ -18,7 +19,7 @@ namespace FlatFlow.Domain.UnitTests
         public void Constructor_WithValidTitle_SetsTitle(string title)
         {
             // Arrange & Act
-            var payment = new Payment(title, 100m, _flatId, _createdById);
+            var payment = new Payment(title, 100m, _dueDate, _flatId, _createdById);
 
             // Assert
             payment.Title.Should().Be(title);
@@ -31,7 +32,7 @@ namespace FlatFlow.Domain.UnitTests
         public void Constructor_WithValidAmount_SetsAmount(decimal amount)
         {
             // Arrange & Act
-            var payment = new Payment("Title", amount, _flatId, _createdById);
+            var payment = new Payment("Title", amount, _dueDate, _flatId, _createdById);
 
             // Assert
             payment.Amount.Should().Be(amount);
@@ -55,6 +56,16 @@ namespace FlatFlow.Domain.UnitTests
 
             // Assert
             payment.CreatedById.Should().Be(_createdById);
+        }
+
+        [Fact]
+        public void Constructor_WithDueDate_SetsDueDate()
+        {
+            // Arrange & Act
+            var payment = CreatePayment();
+
+            // Assert
+            payment.DueDate.Should().Be(_dueDate);
         }
 
         [Fact]
@@ -121,7 +132,7 @@ namespace FlatFlow.Domain.UnitTests
             var payment = CreatePayment();
 
             // Act
-            payment.Update(title, amount);
+            payment.Update(title, amount, _dueDate.AddDays(7));
 
             // Assert
             payment.Title.Should().Be(title);
@@ -136,7 +147,7 @@ namespace FlatFlow.Domain.UnitTests
             var before = DateTime.UtcNow;
 
             // Act
-            payment.Update("New Title", 200m);
+            payment.Update("New Title", 200m, _dueDate.AddDays(7));
             var after = DateTime.UtcNow;
 
             // Assert
@@ -151,7 +162,7 @@ namespace FlatFlow.Domain.UnitTests
             var payment = CreatePayment();
 
             // Act
-            payment.Update("New", 999m);
+            payment.Update("New", 999m, _dueDate);
 
             // Assert
             payment.FlatId.Should().Be(_flatId);

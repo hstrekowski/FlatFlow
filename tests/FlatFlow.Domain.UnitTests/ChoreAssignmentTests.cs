@@ -7,9 +7,10 @@ namespace FlatFlow.Domain.UnitTests
     {
         private readonly Guid _tenantId = Guid.NewGuid();
         private readonly Guid _choreId = Guid.NewGuid();
+        private readonly DateTime _dueDate = DateTime.UtcNow.AddDays(7);
 
         private ChoreAssignment CreateAssignment()
-            => new(_tenantId, _choreId);
+            => new(_tenantId, _choreId, _dueDate);
 
         [Fact]
         public void Constructor_WithTenantId_SetsTenantId()
@@ -29,6 +30,16 @@ namespace FlatFlow.Domain.UnitTests
 
             // Assert
             assignment.ChoreId.Should().Be(_choreId);
+        }
+
+        [Fact]
+        public void Constructor_WithDueDate_SetsDueDate()
+        {
+            // Arrange & Act
+            var assignment = CreateAssignment();
+
+            // Assert
+            assignment.DueDate.Should().Be(_dueDate);
         }
 
         [Fact]
@@ -84,6 +95,51 @@ namespace FlatFlow.Domain.UnitTests
 
             // Assert
             assignment1.Id.Should().NotBe(assignment2.Id);
+        }
+
+        [Fact]
+        public void UpdateDueDate_WithNewDate_ChangesDueDate()
+        {
+            // Arrange
+            var assignment = CreateAssignment();
+            var newDueDate = DateTime.UtcNow.AddDays(14);
+
+            // Act
+            assignment.UpdateDueDate(newDueDate);
+
+            // Assert
+            assignment.DueDate.Should().Be(newDueDate);
+        }
+
+        [Fact]
+        public void UpdateDueDate_WhenCalled_SetsUpdatedAt()
+        {
+            // Arrange
+            var assignment = CreateAssignment();
+            var before = DateTime.UtcNow;
+
+            // Act
+            assignment.UpdateDueDate(DateTime.UtcNow.AddDays(14));
+            var after = DateTime.UtcNow;
+
+            // Assert
+            assignment.UpdatedAt.Should().NotBeNull();
+            assignment.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
+        public void UpdateDueDate_WhenCalled_DoesNotChangeOtherProperties()
+        {
+            // Arrange
+            var assignment = CreateAssignment();
+
+            // Act
+            assignment.UpdateDueDate(DateTime.UtcNow.AddDays(14));
+
+            // Assert
+            assignment.TenantId.Should().Be(_tenantId);
+            assignment.ChoreId.Should().Be(_choreId);
+            assignment.CompletedAt.Should().BeNull();
         }
 
         [Fact]
