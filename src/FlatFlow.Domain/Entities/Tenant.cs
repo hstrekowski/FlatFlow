@@ -14,10 +14,17 @@ namespace FlatFlow.Domain.Entities
         public Guid FlatId { get; private set; }
         public Flat Flat { get; private set; } = null!;
 
-        public List<ChoreAssignment> ChoreAssignments { get; private set; } = [];
-        public List<PaymentShare> PaymentShares { get; private set; } = [];
-        public List<Payment> CreatedPayments { get; private set; } = [];
-        public List<Note> AuthoredNotes { get; private set; } = [];
+        private readonly List<ChoreAssignment> _choreAssignments = [];
+        public IReadOnlyList<ChoreAssignment> ChoreAssignments => _choreAssignments.AsReadOnly();
+
+        private readonly List<PaymentShare> _paymentShares = [];
+        public IReadOnlyList<PaymentShare> PaymentShares => _paymentShares.AsReadOnly();
+
+        private readonly List<Payment> _createdPayments = [];
+        public IReadOnlyList<Payment> CreatedPayments => _createdPayments.AsReadOnly();
+
+        private readonly List<Note> _authoredNotes = [];
+        public IReadOnlyList<Note> AuthoredNotes => _authoredNotes.AsReadOnly();
 
         protected Tenant() : base() { }
 

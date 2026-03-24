@@ -15,7 +15,8 @@ namespace FlatFlow.Domain.Entities
         public Guid CreatedById { get; private set; }
         public Tenant CreatedBy { get; private set; } = null!;
 
-        public List<PaymentShare> PaymentShares { get; private set; } = [];
+        private readonly List<PaymentShare> _paymentShares = [];
+        public IReadOnlyList<PaymentShare> PaymentShares => _paymentShares.AsReadOnly();
 
         protected Payment() : base() { }
 
@@ -64,15 +65,15 @@ namespace FlatFlow.Domain.Entities
         public PaymentShare AddShare(Guid tenantId, decimal shareAmount)
         {
             var share = new PaymentShare(tenantId, Id, shareAmount);
-            PaymentShares.Add(share);
+            _paymentShares.Add(share);
             return share;
         }
 
         public void RemoveShare(Guid shareId)
         {
-            var share = PaymentShares.FirstOrDefault(s => s.Id == shareId)
+            var share = _paymentShares.FirstOrDefault(s => s.Id == shareId)
                 ?? throw new DomainException($"Payment share with ID '{shareId}' not found.");
-            PaymentShares.Remove(share);
+            _paymentShares.Remove(share);
         }
     }
 }

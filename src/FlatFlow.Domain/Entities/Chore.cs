@@ -13,7 +13,8 @@ namespace FlatFlow.Domain.Entities
         public Guid FlatId { get; private set; }
         public Flat Flat { get; private set; } = null!;
 
-        public List<ChoreAssignment> ChoreAssignments { get; private set; } = [];
+        private readonly List<ChoreAssignment> _choreAssignments = [];
+        public IReadOnlyList<ChoreAssignment> ChoreAssignments => _choreAssignments.AsReadOnly();
 
         protected Chore() : base() { }
 
@@ -54,15 +55,15 @@ namespace FlatFlow.Domain.Entities
         public ChoreAssignment AddAssignment(Guid tenantId, DateTime dueDate)
         {
             var assignment = new ChoreAssignment(tenantId, Id, dueDate);
-            ChoreAssignments.Add(assignment);
+            _choreAssignments.Add(assignment);
             return assignment;
         }
 
         public void RemoveAssignment(Guid assignmentId)
         {
-            var assignment = ChoreAssignments.FirstOrDefault(a => a.Id == assignmentId)
+            var assignment = _choreAssignments.FirstOrDefault(a => a.Id == assignmentId)
                 ?? throw new DomainException($"Chore assignment with ID '{assignmentId}' not found.");
-            ChoreAssignments.Remove(assignment);
+            _choreAssignments.Remove(assignment);
         }
     }
 }
