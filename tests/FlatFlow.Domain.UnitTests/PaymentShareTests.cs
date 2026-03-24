@@ -1,0 +1,149 @@
+using FlatFlow.Domain.Entities;
+using FlatFlow.Domain.Enums;
+using FluentAssertions;
+
+namespace FlatFlow.Domain.UnitTests
+{
+    public class PaymentShareTests
+    {
+        private readonly Guid _tenantId = Guid.NewGuid();
+        private readonly Guid _paymentId = Guid.NewGuid();
+
+        private PaymentShare CreatePaymentShare()
+            => new(_tenantId, _paymentId, 75.50m);
+
+        [Fact]
+        public void Constructor_WithTenantId_SetsTenantId()
+        {
+            // Arrange & Act
+            var share = CreatePaymentShare();
+
+            // Assert
+            share.TenantId.Should().Be(_tenantId);
+        }
+
+        [Fact]
+        public void Constructor_WithPaymentId_SetsPaymentId()
+        {
+            // Arrange & Act
+            var share = CreatePaymentShare();
+
+            // Assert
+            share.PaymentId.Should().Be(_paymentId);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(50.25)]
+        [InlineData(1000)]
+        public void Constructor_WithValidShareAmount_SetsShareAmount(decimal amount)
+        {
+            // Arrange & Act
+            var share = new PaymentShare(_tenantId, _paymentId, amount);
+
+            // Assert
+            share.ShareAmount.Should().Be(amount);
+        }
+
+        [Fact]
+        public void Constructor_WhenCalled_SetsStatusToNew()
+        {
+            // Arrange & Act
+            var share = CreatePaymentShare();
+
+            // Assert
+            share.Status.Should().Be(PaymentShareStatus.New);
+        }
+
+        [Fact]
+        public void Constructor_WhenCalled_GeneratesNonEmptyId()
+        {
+            // Arrange & Act
+            var share = CreatePaymentShare();
+
+            // Assert
+            share.Id.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void Constructor_WhenCalled_SetsCreatedAtToUtcNow()
+        {
+            // Arrange
+            var before = DateTime.UtcNow;
+
+            // Act
+            var share = CreatePaymentShare();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            share.CreatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
+        public void Constructor_WhenCalledTwice_GeneratesUniqueIds()
+        {
+            // Arrange & Act
+            var share1 = CreatePaymentShare();
+            var share2 = CreatePaymentShare();
+
+            // Assert
+            share1.Id.Should().NotBe(share2.Id);
+        }
+
+        [Fact]
+        public void MarkAsPartial_WhenCalled_SetsStatusToPartial()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+
+            // Act
+            share.MarkAsPartial();
+
+            // Assert
+            share.Status.Should().Be(PaymentShareStatus.Partial);
+        }
+
+        [Fact]
+        public void MarkAsPaid_WhenCalled_SetsStatusToPaid()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+
+            // Act
+            share.MarkAsPaid();
+
+            // Assert
+            share.Status.Should().Be(PaymentShareStatus.Paid);
+        }
+
+        [Fact]
+        public void MarkAsPaid_WhenCalled_DoesNotChangeOtherProperties()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+
+            // Act
+            share.MarkAsPaid();
+
+            // Assert
+            share.TenantId.Should().Be(_tenantId);
+            share.PaymentId.Should().Be(_paymentId);
+            share.ShareAmount.Should().Be(75.50m);
+        }
+
+        [Fact]
+        public void MarkAsPartial_WhenCalled_DoesNotChangeOtherProperties()
+        {
+            // Arrange
+            var share = CreatePaymentShare();
+
+            // Act
+            share.MarkAsPartial();
+
+            // Assert
+            share.TenantId.Should().Be(_tenantId);
+            share.PaymentId.Should().Be(_paymentId);
+            share.ShareAmount.Should().Be(75.50m);
+        }
+    }
+}
