@@ -104,7 +104,6 @@ namespace FlatFlow.Domain.UnitTests
         [Theory]
         [InlineData("New Title")]
         [InlineData("Updated")]
-        [InlineData("")]
         public void UpdateTitle_WithNewValue_ChangesTitle(string title)
         {
             // Arrange
@@ -163,6 +162,59 @@ namespace FlatFlow.Domain.UnitTests
             // Assert
             note.UpdatedAt.Should().NotBeNull();
             note.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidTitle_ThrowsArgumentException(string? title)
+        {
+            // Arrange & Act
+            var act = () => new Note(title!, "Content", _flatId, _authorId);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Note title cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyFlatId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new Note("Title", "Content", Guid.Empty, _authorId);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Flat ID cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyAuthorId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new Note("Title", "Content", _flatId, Guid.Empty);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Author ID cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void UpdateTitle_WithInvalidTitle_ThrowsArgumentException(string? title)
+        {
+            // Arrange
+            var note = CreateNote();
+
+            // Act
+            var act = () => note.UpdateTitle(title!);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Note title cannot be empty.*");
         }
     }
 }

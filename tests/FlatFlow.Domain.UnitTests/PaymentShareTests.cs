@@ -33,7 +33,6 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
         [InlineData(50.25)]
         [InlineData(1000)]
         public void Constructor_WithValidShareAmount_SetsShareAmount(decimal amount)
@@ -230,6 +229,42 @@ namespace FlatFlow.Domain.UnitTests
 
             // Assert
             share.Status.Should().Be(PaymentShareStatus.Paid);
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyTenantId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new PaymentShare(Guid.Empty, _paymentId, 75.50m);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Tenant ID cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyPaymentId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new PaymentShare(_tenantId, Guid.Empty, 75.50m);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Payment ID cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(-50.25)]
+        public void Constructor_WithInvalidShareAmount_ThrowsArgumentException(decimal amount)
+        {
+            // Arrange & Act
+            var act = () => new PaymentShare(_tenantId, _paymentId, amount);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Share amount must be greater than zero.*");
         }
     }
 }

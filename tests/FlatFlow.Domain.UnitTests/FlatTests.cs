@@ -113,7 +113,6 @@ namespace FlatFlow.Domain.UnitTests
         [Theory]
         [InlineData("New Name")]
         [InlineData("Updated Flat")]
-        [InlineData("")]
         public void UpdateName_WithValue_ChangesName(string newName)
         {
             // Arrange
@@ -214,6 +213,60 @@ namespace FlatFlow.Domain.UnitTests
 
             // Assert
             flat.AccessCode.Should().HaveLength(8).And.BeUpperCased();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidName_ThrowsArgumentException(string? name)
+        {
+            // Arrange & Act
+            var act = () => new Flat(name!, _validAddress);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Flat name cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithNullAddress_ThrowsArgumentNullException()
+        {
+            // Arrange & Act
+            var act = () => new Flat("My Flat", null!);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void UpdateName_WithInvalidName_ThrowsArgumentException(string? name)
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.UpdateName(name!);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Flat name cannot be empty.*");
+        }
+
+        [Fact]
+        public void UpdateAddress_WithNull_ThrowsArgumentNullException()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.UpdateAddress(null!);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>();
         }
     }
 }

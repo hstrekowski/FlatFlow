@@ -18,6 +18,11 @@ namespace FlatFlow.Domain.Entities
 
         public Chore(string title, string description, ChoreFrequency frequency, Guid flatId) : base()
         {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Chore title cannot be empty.", nameof(title));
+            if (flatId == Guid.Empty)
+                throw new ArgumentException("Flat ID cannot be empty.", nameof(flatId));
+
             Title = title;
             Description = description;
             Frequency = frequency;
@@ -26,6 +31,9 @@ namespace FlatFlow.Domain.Entities
 
         public void UpdateTitle(string title)
         {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Chore title cannot be empty.", nameof(title));
+
             Title = title;
             SetUpdatedAt();
         }

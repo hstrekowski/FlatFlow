@@ -17,6 +17,11 @@ namespace FlatFlow.Domain.Entities
 
         public ChoreAssignment(Guid tenantId, Guid choreId, DateTime dueDate) : base()
         {
+            if (tenantId == Guid.Empty)
+                throw new ArgumentException("Tenant ID cannot be empty.", nameof(tenantId));
+            if (choreId == Guid.Empty)
+                throw new ArgumentException("Chore ID cannot be empty.", nameof(choreId));
+
             TenantId = tenantId;
             ChoreId = choreId;
             DueDate = dueDate;

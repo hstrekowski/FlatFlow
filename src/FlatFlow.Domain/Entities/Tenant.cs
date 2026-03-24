@@ -22,6 +22,17 @@ namespace FlatFlow.Domain.Entities
 
         public Tenant(string firstName, string lastName, string email, string userId, Guid flatId, bool isOwner = false) : base()
         {
+            if (string.IsNullOrWhiteSpace(firstName))
+                throw new ArgumentException("First name cannot be empty.", nameof(firstName));
+            if (string.IsNullOrWhiteSpace(lastName))
+                throw new ArgumentException("Last name cannot be empty.", nameof(lastName));
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("Email cannot be empty.", nameof(email));
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("User ID cannot be empty.", nameof(userId));
+            if (flatId == Guid.Empty)
+                throw new ArgumentException("Flat ID cannot be empty.", nameof(flatId));
+
             FirstName = firstName;
             LastName = lastName;
             Email = email;
@@ -32,6 +43,11 @@ namespace FlatFlow.Domain.Entities
 
         public void UpdateProfile(string firstName, string lastName)
         {
+            if (string.IsNullOrWhiteSpace(firstName))
+                throw new ArgumentException("First name cannot be empty.", nameof(firstName));
+            if (string.IsNullOrWhiteSpace(lastName))
+                throw new ArgumentException("Last name cannot be empty.", nameof(lastName));
+
             FirstName = firstName;
             LastName = lastName;
             SetUpdatedAt();
@@ -39,6 +55,9 @@ namespace FlatFlow.Domain.Entities
 
         public void UpdateEmail(string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("Email cannot be empty.", nameof(email));
+
             Email = email;
             SetUpdatedAt();
         }

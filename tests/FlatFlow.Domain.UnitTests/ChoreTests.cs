@@ -118,7 +118,6 @@ namespace FlatFlow.Domain.UnitTests
         [Theory]
         [InlineData("New Title")]
         [InlineData("Updated")]
-        [InlineData("")]
         public void UpdateTitle_WithNewValue_ChangesTitle(string title)
         {
             // Arrange
@@ -208,6 +207,48 @@ namespace FlatFlow.Domain.UnitTests
             // Assert
             chore.UpdatedAt.Should().NotBeNull();
             chore.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidTitle_ThrowsArgumentException(string? title)
+        {
+            // Arrange & Act
+            var act = () => new Chore(title!, "Description", ChoreFrequency.Once, _flatId);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Chore title cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyFlatId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new Chore("Title", "Description", ChoreFrequency.Once, Guid.Empty);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Flat ID cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void UpdateTitle_WithInvalidTitle_ThrowsArgumentException(string? title)
+        {
+            // Arrange
+            var chore = CreateChore();
+
+            // Act
+            var act = () => chore.UpdateTitle(title!);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Chore title cannot be empty.*");
         }
     }
 }

@@ -271,5 +271,27 @@ namespace FlatFlow.Domain.UnitTests
             act.Should().Throw<InvalidOperationException>()
                 .WithMessage("Chore assignment is not completed.");
         }
+
+        [Fact]
+        public void Constructor_WithEmptyTenantId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new ChoreAssignment(Guid.Empty, _choreId, _dueDate);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Tenant ID cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyChoreId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new ChoreAssignment(_tenantId, Guid.Empty, _dueDate);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Chore ID cannot be empty.*");
+        }
     }
 }

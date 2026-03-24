@@ -26,7 +26,6 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
         [InlineData(99.99)]
         [InlineData(1500.00)]
         public void Constructor_WithValidAmount_SetsAmount(decimal amount)
@@ -126,7 +125,6 @@ namespace FlatFlow.Domain.UnitTests
         [Theory]
         [InlineData("New Title")]
         [InlineData("Updated")]
-        [InlineData("")]
         public void UpdateTitle_WithNewValue_ChangesTitle(string title)
         {
             // Arrange
@@ -156,7 +154,6 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Theory]
-        [InlineData(0)]
         [InlineData(200.00)]
         [InlineData(999.99)]
         public void UpdateAmount_WithNewValue_ChangesAmount(decimal amount)
@@ -215,6 +212,90 @@ namespace FlatFlow.Domain.UnitTests
             // Assert
             payment.UpdatedAt.Should().NotBeNull();
             payment.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Constructor_WithInvalidTitle_ThrowsArgumentException(string? title)
+        {
+            // Arrange & Act
+            var act = () => new Payment(title!, 100m, _dueDate, _flatId, _createdById);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Payment title cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(-100.50)]
+        public void Constructor_WithInvalidAmount_ThrowsArgumentException(decimal amount)
+        {
+            // Arrange & Act
+            var act = () => new Payment("Title", amount, _dueDate, _flatId, _createdById);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Payment amount must be greater than zero.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyFlatId_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new Payment("Title", 100m, _dueDate, Guid.Empty, _createdById);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Flat ID cannot be empty.*");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyCreatedById_ThrowsArgumentException()
+        {
+            // Arrange & Act
+            var act = () => new Payment("Title", 100m, _dueDate, _flatId, Guid.Empty);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Created by ID cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void UpdateTitle_WithInvalidTitle_ThrowsArgumentException(string? title)
+        {
+            // Arrange
+            var payment = CreatePayment();
+
+            // Act
+            var act = () => payment.UpdateTitle(title!);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Payment title cannot be empty.*");
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(-100.50)]
+        public void UpdateAmount_WithInvalidAmount_ThrowsArgumentException(decimal amount)
+        {
+            // Arrange
+            var payment = CreatePayment();
+
+            // Act
+            var act = () => payment.UpdateAmount(amount);
+
+            // Assert
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Payment amount must be greater than zero.*");
         }
     }
 }

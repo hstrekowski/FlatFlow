@@ -17,6 +17,13 @@ namespace FlatFlow.Domain.Entities
 
         public Note(string title, string content, Guid flatId, Guid authorId) : base()
         {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Note title cannot be empty.", nameof(title));
+            if (flatId == Guid.Empty)
+                throw new ArgumentException("Flat ID cannot be empty.", nameof(flatId));
+            if (authorId == Guid.Empty)
+                throw new ArgumentException("Author ID cannot be empty.", nameof(authorId));
+
             Title = title;
             Content = content;
             FlatId = flatId;
@@ -25,6 +32,9 @@ namespace FlatFlow.Domain.Entities
 
         public void UpdateTitle(string title)
         {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Note title cannot be empty.", nameof(title));
+
             Title = title;
             SetUpdatedAt();
         }

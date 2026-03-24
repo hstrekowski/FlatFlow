@@ -18,6 +18,13 @@ namespace FlatFlow.Domain.Entities
 
         public PaymentShare(Guid tenantId, Guid paymentId, decimal shareAmount) : base()
         {
+            if (tenantId == Guid.Empty)
+                throw new ArgumentException("Tenant ID cannot be empty.", nameof(tenantId));
+            if (paymentId == Guid.Empty)
+                throw new ArgumentException("Payment ID cannot be empty.", nameof(paymentId));
+            if (shareAmount <= 0)
+                throw new ArgumentException("Share amount must be greater than zero.", nameof(shareAmount));
+
             TenantId = tenantId;
             PaymentId = paymentId;
             ShareAmount = shareAmount;
