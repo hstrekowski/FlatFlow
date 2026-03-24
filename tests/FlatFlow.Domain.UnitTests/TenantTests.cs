@@ -213,5 +213,91 @@ namespace FlatFlow.Domain.UnitTests
             // Assert
             tenant.Email.Should().Be(newEmail);
         }
+
+        [Fact]
+        public void PromoteToOwner_WhenNotOwner_SetsIsOwnerToTrue()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: false);
+
+            // Act
+            tenant.PromoteToOwner();
+
+            // Assert
+            tenant.IsOwner.Should().BeTrue();
+        }
+
+        [Fact]
+        public void PromoteToOwner_WhenNotOwner_SetsUpdatedAt()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: false);
+            var before = DateTime.UtcNow;
+
+            // Act
+            tenant.PromoteToOwner();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            tenant.UpdatedAt.Should().NotBeNull();
+            tenant.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
+        public void PromoteToOwner_WhenAlreadyOwner_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: true);
+
+            // Act
+            var act = () => tenant.PromoteToOwner();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("Tenant is already an owner.");
+        }
+
+        [Fact]
+        public void RevokeOwnership_WhenOwner_SetsIsOwnerToFalse()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: true);
+
+            // Act
+            tenant.RevokeOwnership();
+
+            // Assert
+            tenant.IsOwner.Should().BeFalse();
+        }
+
+        [Fact]
+        public void RevokeOwnership_WhenOwner_SetsUpdatedAt()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: true);
+            var before = DateTime.UtcNow;
+
+            // Act
+            tenant.RevokeOwnership();
+            var after = DateTime.UtcNow;
+
+            // Assert
+            tenant.UpdatedAt.Should().NotBeNull();
+            tenant.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+        }
+
+        [Fact]
+        public void RevokeOwnership_WhenNotOwner_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var tenant = CreateTenant(isOwner: false);
+
+            // Act
+            var act = () => tenant.RevokeOwnership();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("Tenant is not an owner.");
+        }
     }
 }

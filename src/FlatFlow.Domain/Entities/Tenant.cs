@@ -42,5 +42,23 @@ namespace FlatFlow.Domain.Entities
             Email = email;
             SetUpdatedAt();
         }
+
+        public void PromoteToOwner()
+        {
+            if (IsOwner)
+                throw new InvalidOperationException("Tenant is already an owner.");
+
+            IsOwner = true;
+            SetUpdatedAt();
+        }
+
+        public void RevokeOwnership()
+        {
+            if (!IsOwner)
+                throw new InvalidOperationException("Tenant is not an owner.");
+
+            IsOwner = false;
+            SetUpdatedAt();
+        }
     }
 }
