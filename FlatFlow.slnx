@@ -1,2 +1,14 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FlatFlow.Api/FlatFlow.Api.csproj" />
+    <Project Path="src/FlatFlow.Application/FlatFlow.Application.csproj" />
+    <Project Path="src/FlatFlow.Domain/FlatFlow.Domain.csproj" />
+    <Project Path="src/FlatFlow.Infrastructure/FlatFlow.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FlatFlow.Application.UnitTests/FlatFlow.Application.UnitTests.csproj" />
+    <Project Path="tests/FlatFlow.Domain.UnitTests/FlatFlow.Domain.UnitTests.csproj" />
+    <Project
+      Path="tests/FlatFlow.Infrastructure.IntegrationTests/FlatFlow.Infrastructure.IntegrationTests.csproj" />
+  </Folder>
 </Solution>

@@ -61,6 +61,6 @@ tests/
 ├── Project.Domain.UnitTests/
 ├── Project.Application.UnitTests/
 ├── Project.Infrastructure.IntegrationTests/
-clinet/
-├── Here goes Angular frotned
+client/
+├── Here goes Angular frontend
 ```
