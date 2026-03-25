@@ -1,5 +1,6 @@
 using FlatFlow.Domain.Entities;
 using FlatFlow.Domain.Enums;
+using FlatFlow.Domain.Exceptions;
 using FluentAssertions;
 
 namespace FlatFlow.Domain.UnitTests
@@ -188,7 +189,7 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
-        public void MarkAsPartial_WhenAlreadyPaid_ThrowsInvalidOperationException()
+        public void MarkAsPartial_WhenAlreadyPaid_ThrowsDomainException()
         {
             // Arrange
             var share = CreatePaymentShare();
@@ -198,12 +199,12 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => share.MarkAsPartial();
 
             // Assert
-            act.Should().Throw<InvalidOperationException>()
+            act.Should().Throw<DomainException>()
                 .WithMessage("Cannot mark a paid share as partial.");
         }
 
         [Fact]
-        public void MarkAsPaid_WhenAlreadyPaid_ThrowsInvalidOperationException()
+        public void MarkAsPaid_WhenAlreadyPaid_ThrowsDomainException()
         {
             // Arrange
             var share = CreatePaymentShare();
@@ -213,7 +214,7 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => share.MarkAsPaid();
 
             // Assert
-            act.Should().Throw<InvalidOperationException>()
+            act.Should().Throw<DomainException>()
                 .WithMessage("Payment share is already paid.");
         }
 
@@ -232,39 +233,39 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
-        public void Constructor_WithEmptyTenantId_ThrowsArgumentException()
+        public void Constructor_WithEmptyTenantId_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new PaymentShare(Guid.Empty, _paymentId, 75.50m);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Tenant ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Tenant ID cannot be empty.");
         }
 
         [Fact]
-        public void Constructor_WithEmptyPaymentId_ThrowsArgumentException()
+        public void Constructor_WithEmptyPaymentId_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new PaymentShare(_tenantId, Guid.Empty, 75.50m);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Payment ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Payment ID cannot be empty.");
         }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(-50.25)]
-        public void Constructor_WithInvalidShareAmount_ThrowsArgumentException(decimal amount)
+        public void Constructor_WithInvalidShareAmount_ThrowsDomainValidationException(decimal amount)
         {
             // Arrange & Act
             var act = () => new PaymentShare(_tenantId, _paymentId, amount);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Share amount must be greater than zero.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Share amount must be greater than zero.");
         }
     }
 }

@@ -1,4 +1,5 @@
 using FlatFlow.Domain.Entities;
+using FlatFlow.Domain.Exceptions;
 using FluentAssertions;
 
 namespace FlatFlow.Domain.UnitTests
@@ -218,57 +219,57 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidTitle_ThrowsArgumentException(string? title)
+        public void Constructor_WithInvalidTitle_ThrowsDomainValidationException(string? title)
         {
             // Arrange & Act
             var act = () => new Payment(title!, 100m, _dueDate, _flatId, _createdById);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Payment title cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Payment title cannot be empty.");
         }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(-100.50)]
-        public void Constructor_WithInvalidAmount_ThrowsArgumentException(decimal amount)
+        public void Constructor_WithInvalidAmount_ThrowsDomainValidationException(decimal amount)
         {
             // Arrange & Act
             var act = () => new Payment("Title", amount, _dueDate, _flatId, _createdById);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Payment amount must be greater than zero.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Payment amount must be greater than zero.");
         }
 
         [Fact]
-        public void Constructor_WithEmptyFlatId_ThrowsArgumentException()
+        public void Constructor_WithEmptyFlatId_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new Payment("Title", 100m, _dueDate, Guid.Empty, _createdById);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Flat ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Flat ID cannot be empty.");
         }
 
         [Fact]
-        public void Constructor_WithEmptyCreatedById_ThrowsArgumentException()
+        public void Constructor_WithEmptyCreatedById_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new Payment("Title", 100m, _dueDate, _flatId, Guid.Empty);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Created by ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Created by ID cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void UpdateTitle_WithInvalidTitle_ThrowsArgumentException(string? title)
+        public void UpdateTitle_WithInvalidTitle_ThrowsDomainValidationException(string? title)
         {
             // Arrange
             var payment = CreatePayment();
@@ -277,15 +278,15 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => payment.UpdateTitle(title!);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Payment title cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Payment title cannot be empty.");
         }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(-100.50)]
-        public void UpdateAmount_WithInvalidAmount_ThrowsArgumentException(decimal amount)
+        public void UpdateAmount_WithInvalidAmount_ThrowsDomainValidationException(decimal amount)
         {
             // Arrange
             var payment = CreatePayment();
@@ -294,8 +295,87 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => payment.UpdateAmount(amount);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Payment amount must be greater than zero.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Payment amount must be greater than zero.");
+        }
+
+        // --- AddShare ---
+
+        [Fact]
+        public void AddShare_WithValidData_ReturnsShareAndAddsToCollection()
+        {
+            // Arrange
+            var payment = CreatePayment();
+            var tenantId = Guid.NewGuid();
+
+            // Act
+            var share = payment.AddShare(tenantId, 50m);
+
+            // Assert
+            share.Should().NotBeNull();
+            share.TenantId.Should().Be(tenantId);
+            share.ShareAmount.Should().Be(50m);
+            share.PaymentId.Should().Be(payment.Id);
+            payment.PaymentShares.Should().ContainSingle().Which.Should().Be(share);
+        }
+
+        [Fact]
+        public void AddShare_WithEmptyTenantId_ThrowsDomainValidationException()
+        {
+            // Arrange
+            var payment = CreatePayment();
+
+            // Act
+            var act = () => payment.AddShare(Guid.Empty, 50m);
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Tenant ID cannot be empty.");
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void AddShare_WithInvalidAmount_ThrowsDomainValidationException(decimal amount)
+        {
+            // Arrange
+            var payment = CreatePayment();
+
+            // Act
+            var act = () => payment.AddShare(Guid.NewGuid(), amount);
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Share amount must be greater than zero.");
+        }
+
+        // --- RemoveShare ---
+
+        [Fact]
+        public void RemoveShare_WithExistingId_RemovesFromCollection()
+        {
+            // Arrange
+            var payment = CreatePayment();
+            var share = payment.AddShare(Guid.NewGuid(), 50m);
+
+            // Act
+            payment.RemoveShare(share.Id);
+
+            // Assert
+            payment.PaymentShares.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveShare_WithNonExistingId_ThrowsDomainException()
+        {
+            // Arrange
+            var payment = CreatePayment();
+
+            // Act
+            var act = () => payment.RemoveShare(Guid.NewGuid());
+
+            // Assert
+            act.Should().Throw<DomainException>();
         }
     }
 }

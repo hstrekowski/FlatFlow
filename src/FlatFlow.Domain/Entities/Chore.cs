@@ -1,5 +1,6 @@
 using FlatFlow.Domain.Common;
 using FlatFlow.Domain.Enums;
+using FlatFlow.Domain.Exceptions;
 
 namespace FlatFlow.Domain.Entities
 {
@@ -12,16 +13,17 @@ namespace FlatFlow.Domain.Entities
         public Guid FlatId { get; private set; }
         public Flat Flat { get; private set; } = null!;
 
-        public List<ChoreAssignment> ChoreAssignments { get; private set; } = [];
+        private readonly List<ChoreAssignment> _choreAssignments = [];
+        public IReadOnlyList<ChoreAssignment> ChoreAssignments => _choreAssignments.AsReadOnly();
 
         protected Chore() : base() { }
 
         public Chore(string title, string description, ChoreFrequency frequency, Guid flatId) : base()
         {
             if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentException("Chore title cannot be empty.", nameof(title));
+                throw new DomainValidationException("Chore title cannot be empty.", nameof(title));
             if (flatId == Guid.Empty)
-                throw new ArgumentException("Flat ID cannot be empty.", nameof(flatId));
+                throw new DomainValidationException("Flat ID cannot be empty.", nameof(flatId));
 
             Title = title;
             Description = description;
@@ -32,7 +34,7 @@ namespace FlatFlow.Domain.Entities
         public void UpdateTitle(string title)
         {
             if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentException("Chore title cannot be empty.", nameof(title));
+                throw new DomainValidationException("Chore title cannot be empty.", nameof(title));
 
             Title = title;
             SetUpdatedAt();
@@ -48,6 +50,20 @@ namespace FlatFlow.Domain.Entities
         {
             Frequency = frequency;
             SetUpdatedAt();
+        }
+
+        public ChoreAssignment AddAssignment(Guid tenantId, DateTime dueDate)
+        {
+            var assignment = new ChoreAssignment(tenantId, Id, dueDate);
+            _choreAssignments.Add(assignment);
+            return assignment;
+        }
+
+        public void RemoveAssignment(Guid assignmentId)
+        {
+            var assignment = _choreAssignments.FirstOrDefault(a => a.Id == assignmentId)
+                ?? throw new DomainException($"Chore assignment with ID '{assignmentId}' not found.");
+            _choreAssignments.Remove(assignment);
         }
     }
 }

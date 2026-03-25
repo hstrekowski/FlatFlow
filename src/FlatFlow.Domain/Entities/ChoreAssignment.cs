@@ -1,4 +1,5 @@
 using FlatFlow.Domain.Common;
+using FlatFlow.Domain.Exceptions;
 
 namespace FlatFlow.Domain.Entities
 {
@@ -18,9 +19,9 @@ namespace FlatFlow.Domain.Entities
         public ChoreAssignment(Guid tenantId, Guid choreId, DateTime dueDate) : base()
         {
             if (tenantId == Guid.Empty)
-                throw new ArgumentException("Tenant ID cannot be empty.", nameof(tenantId));
+                throw new DomainValidationException("Tenant ID cannot be empty.", nameof(tenantId));
             if (choreId == Guid.Empty)
-                throw new ArgumentException("Chore ID cannot be empty.", nameof(choreId));
+                throw new DomainValidationException("Chore ID cannot be empty.", nameof(choreId));
 
             TenantId = tenantId;
             ChoreId = choreId;
@@ -38,7 +39,7 @@ namespace FlatFlow.Domain.Entities
         public void Complete()
         {
             if (IsCompleted)
-                throw new InvalidOperationException("Chore assignment is already completed.");
+                throw new DomainException("Chore assignment is already completed.");
 
             CompletedAt = DateTime.UtcNow;
             SetUpdatedAt();
@@ -47,7 +48,7 @@ namespace FlatFlow.Domain.Entities
         public void Reopen()
         {
             if (!IsCompleted)
-                throw new InvalidOperationException("Chore assignment is not completed.");
+                throw new DomainException("Chore assignment is not completed.");
 
             CompletedAt = null;
             SetUpdatedAt();

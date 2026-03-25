@@ -1,5 +1,6 @@
 using FlatFlow.Domain.Entities;
 using FlatFlow.Domain.Enums;
+using FlatFlow.Domain.Exceptions;
 using FluentAssertions;
 
 namespace FlatFlow.Domain.UnitTests
@@ -213,32 +214,32 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidTitle_ThrowsArgumentException(string? title)
+        public void Constructor_WithInvalidTitle_ThrowsDomainValidationException(string? title)
         {
             // Arrange & Act
             var act = () => new Chore(title!, "Description", ChoreFrequency.Once, _flatId);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Chore title cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Chore title cannot be empty.");
         }
 
         [Fact]
-        public void Constructor_WithEmptyFlatId_ThrowsArgumentException()
+        public void Constructor_WithEmptyFlatId_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new Chore("Title", "Description", ChoreFrequency.Once, Guid.Empty);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Flat ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Flat ID cannot be empty.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void UpdateTitle_WithInvalidTitle_ThrowsArgumentException(string? title)
+        public void UpdateTitle_WithInvalidTitle_ThrowsDomainValidationException(string? title)
         {
             // Arrange
             var chore = CreateChore();
@@ -247,8 +248,72 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => chore.UpdateTitle(title!);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Chore title cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Chore title cannot be empty.");
+        }
+
+        // --- AddAssignment ---
+
+        [Fact]
+        public void AddAssignment_WithValidData_ReturnsAssignmentAndAddsToCollection()
+        {
+            // Arrange
+            var chore = CreateChore();
+            var tenantId = Guid.NewGuid();
+            var dueDate = DateTime.UtcNow.AddDays(7);
+
+            // Act
+            var assignment = chore.AddAssignment(tenantId, dueDate);
+
+            // Assert
+            assignment.Should().NotBeNull();
+            assignment.TenantId.Should().Be(tenantId);
+            assignment.DueDate.Should().Be(dueDate);
+            assignment.ChoreId.Should().Be(chore.Id);
+            chore.ChoreAssignments.Should().ContainSingle().Which.Should().Be(assignment);
+        }
+
+        [Fact]
+        public void AddAssignment_WithEmptyTenantId_ThrowsDomainValidationException()
+        {
+            // Arrange
+            var chore = CreateChore();
+
+            // Act
+            var act = () => chore.AddAssignment(Guid.Empty, DateTime.UtcNow.AddDays(7));
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Tenant ID cannot be empty.");
+        }
+
+        // --- RemoveAssignment ---
+
+        [Fact]
+        public void RemoveAssignment_WithExistingId_RemovesFromCollection()
+        {
+            // Arrange
+            var chore = CreateChore();
+            var assignment = chore.AddAssignment(Guid.NewGuid(), DateTime.UtcNow.AddDays(7));
+
+            // Act
+            chore.RemoveAssignment(assignment.Id);
+
+            // Assert
+            chore.ChoreAssignments.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveAssignment_WithNonExistingId_ThrowsDomainException()
+        {
+            // Arrange
+            var chore = CreateChore();
+
+            // Act
+            var act = () => chore.RemoveAssignment(Guid.NewGuid());
+
+            // Assert
+            act.Should().Throw<DomainException>();
         }
     }
 }

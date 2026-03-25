@@ -1,4 +1,6 @@
 using FlatFlow.Domain.Entities;
+using FlatFlow.Domain.Enums;
+using FlatFlow.Domain.Exceptions;
 using FlatFlow.Domain.ValueObjects;
 using FluentAssertions;
 
@@ -219,31 +221,32 @@ namespace FlatFlow.Domain.UnitTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Constructor_WithInvalidName_ThrowsArgumentException(string? name)
+        public void Constructor_WithInvalidName_ThrowsDomainValidationException(string? name)
         {
             // Arrange & Act
             var act = () => new Flat(name!, _validAddress);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Flat name cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Flat name cannot be empty.");
         }
 
         [Fact]
-        public void Constructor_WithNullAddress_ThrowsArgumentNullException()
+        public void Constructor_WithNullAddress_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new Flat("My Flat", null!);
 
             // Assert
-            act.Should().Throw<ArgumentNullException>();
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Address cannot be null.");
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void UpdateName_WithInvalidName_ThrowsArgumentException(string? name)
+        public void UpdateName_WithInvalidName_ThrowsDomainValidationException(string? name)
         {
             // Arrange
             var flat = new Flat("My Flat", _validAddress);
@@ -252,12 +255,12 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => flat.UpdateName(name!);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Flat name cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Flat name cannot be empty.");
         }
 
         [Fact]
-        public void UpdateAddress_WithNull_ThrowsArgumentNullException()
+        public void UpdateAddress_WithNull_ThrowsDomainValidationException()
         {
             // Arrange
             var flat = new Flat("My Flat", _validAddress);
@@ -266,7 +269,294 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => flat.UpdateAddress(null!);
 
             // Assert
-            act.Should().Throw<ArgumentNullException>();
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Address cannot be null.");
+        }
+
+        // --- AddTenant ---
+
+        [Fact]
+        public void AddTenant_WithValidData_ReturnsTenantAndAddsToCollection()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var tenant = flat.AddTenant("John", "Doe", "john@example.com", "user-123");
+
+            // Assert
+            tenant.Should().NotBeNull();
+            tenant.FirstName.Should().Be("John");
+            tenant.LastName.Should().Be("Doe");
+            tenant.FlatId.Should().Be(flat.Id);
+            flat.Tenants.Should().ContainSingle().Which.Should().Be(tenant);
+        }
+
+        [Fact]
+        public void AddTenant_WithIsOwner_SetsIsOwnerToTrue()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var tenant = flat.AddTenant("John", "Doe", "john@example.com", "user-123", isOwner: true);
+
+            // Assert
+            tenant.IsOwner.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void AddTenant_WithInvalidFirstName_ThrowsDomainValidationException(string? firstName)
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.AddTenant(firstName!, "Doe", "john@example.com", "user-123");
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("First name cannot be empty.");
+        }
+
+        // --- RemoveTenant ---
+
+        [Fact]
+        public void RemoveTenant_WithExistingId_RemovesFromCollection()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            var tenant = flat.AddTenant("John", "Doe", "john@example.com", "user-123");
+
+            // Act
+            flat.RemoveTenant(tenant.Id);
+
+            // Assert
+            flat.Tenants.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveTenant_WithNonExistingId_ThrowsDomainException()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.RemoveTenant(Guid.NewGuid());
+
+            // Assert
+            act.Should().Throw<DomainException>();
+        }
+
+        // --- AddChore ---
+
+        [Fact]
+        public void AddChore_WithValidData_ReturnsChoreAndAddsToCollection()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var chore = flat.AddChore("Take out trash", "Use green bin", ChoreFrequency.Weekly);
+
+            // Assert
+            chore.Should().NotBeNull();
+            chore.Title.Should().Be("Take out trash");
+            chore.FlatId.Should().Be(flat.Id);
+            flat.Chores.Should().ContainSingle().Which.Should().Be(chore);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void AddChore_WithInvalidTitle_ThrowsDomainValidationException(string? title)
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.AddChore(title!, "Description", ChoreFrequency.Once);
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Chore title cannot be empty.");
+        }
+
+        // --- RemoveChore ---
+
+        [Fact]
+        public void RemoveChore_WithExistingId_RemovesFromCollection()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            var chore = flat.AddChore("Title", "Desc", ChoreFrequency.Once);
+
+            // Act
+            flat.RemoveChore(chore.Id);
+
+            // Assert
+            flat.Chores.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveChore_WithNonExistingId_ThrowsDomainException()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.RemoveChore(Guid.NewGuid());
+
+            // Assert
+            act.Should().Throw<DomainException>();
+        }
+
+        // --- AddNote ---
+
+        [Fact]
+        public void AddNote_WithValidData_ReturnsNoteAndAddsToCollection()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            var authorId = Guid.NewGuid();
+
+            // Act
+            var note = flat.AddNote("Shopping", "Buy milk", authorId);
+
+            // Assert
+            note.Should().NotBeNull();
+            note.Title.Should().Be("Shopping");
+            note.FlatId.Should().Be(flat.Id);
+            note.AuthorId.Should().Be(authorId);
+            flat.Notes.Should().ContainSingle().Which.Should().Be(note);
+        }
+
+        [Fact]
+        public void AddNote_WithEmptyAuthorId_ThrowsDomainValidationException()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.AddNote("Title", "Content", Guid.Empty);
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Author ID cannot be empty.");
+        }
+
+        // --- RemoveNote ---
+
+        [Fact]
+        public void RemoveNote_WithExistingId_RemovesFromCollection()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            var note = flat.AddNote("Title", "Content", Guid.NewGuid());
+
+            // Act
+            flat.RemoveNote(note.Id);
+
+            // Assert
+            flat.Notes.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveNote_WithNonExistingId_ThrowsDomainException()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.RemoveNote(Guid.NewGuid());
+
+            // Assert
+            act.Should().Throw<DomainException>();
+        }
+
+        // --- AddPayment ---
+
+        [Fact]
+        public void AddPayment_WithValidData_ReturnsPaymentAndAddsToCollection()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            var createdById = Guid.NewGuid();
+            var dueDate = DateTime.UtcNow.AddDays(30);
+
+            // Act
+            var payment = flat.AddPayment("Rent", 1500m, dueDate, createdById);
+
+            // Assert
+            payment.Should().NotBeNull();
+            payment.Title.Should().Be("Rent");
+            payment.Amount.Should().Be(1500m);
+            payment.FlatId.Should().Be(flat.Id);
+            payment.CreatedById.Should().Be(createdById);
+            flat.Payments.Should().ContainSingle().Which.Should().Be(payment);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void AddPayment_WithInvalidAmount_ThrowsDomainValidationException(decimal amount)
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.AddPayment("Rent", amount, DateTime.UtcNow, Guid.NewGuid());
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Payment amount must be greater than zero.");
+        }
+
+        [Fact]
+        public void AddPayment_WithEmptyCreatedById_ThrowsDomainValidationException()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.AddPayment("Rent", 100m, DateTime.UtcNow, Guid.Empty);
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Created by ID cannot be empty.");
+        }
+
+        // --- RemovePayment ---
+
+        [Fact]
+        public void RemovePayment_WithExistingId_RemovesFromCollection()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            var payment = flat.AddPayment("Rent", 1500m, DateTime.UtcNow, Guid.NewGuid());
+
+            // Act
+            flat.RemovePayment(payment.Id);
+
+            // Assert
+            flat.Payments.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemovePayment_WithNonExistingId_ThrowsDomainException()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Act
+            var act = () => flat.RemovePayment(Guid.NewGuid());
+
+            // Assert
+            act.Should().Throw<DomainException>();
         }
     }
 }

@@ -1,4 +1,5 @@
 using FlatFlow.Domain.Entities;
+using FlatFlow.Domain.Exceptions;
 using FluentAssertions;
 
 namespace FlatFlow.Domain.UnitTests
@@ -189,7 +190,7 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
-        public void Complete_WhenAlreadyCompleted_ThrowsInvalidOperationException()
+        public void Complete_WhenAlreadyCompleted_ThrowsDomainException()
         {
             // Arrange
             var assignment = CreateAssignment();
@@ -199,7 +200,7 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => assignment.Complete();
 
             // Assert
-            act.Should().Throw<InvalidOperationException>()
+            act.Should().Throw<DomainException>()
                 .WithMessage("Chore assignment is already completed.");
         }
 
@@ -259,7 +260,7 @@ namespace FlatFlow.Domain.UnitTests
         }
 
         [Fact]
-        public void Reopen_WhenNotCompleted_ThrowsInvalidOperationException()
+        public void Reopen_WhenNotCompleted_ThrowsDomainException()
         {
             // Arrange
             var assignment = CreateAssignment();
@@ -268,30 +269,30 @@ namespace FlatFlow.Domain.UnitTests
             var act = () => assignment.Reopen();
 
             // Assert
-            act.Should().Throw<InvalidOperationException>()
+            act.Should().Throw<DomainException>()
                 .WithMessage("Chore assignment is not completed.");
         }
 
         [Fact]
-        public void Constructor_WithEmptyTenantId_ThrowsArgumentException()
+        public void Constructor_WithEmptyTenantId_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new ChoreAssignment(Guid.Empty, _choreId, _dueDate);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Tenant ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Tenant ID cannot be empty.");
         }
 
         [Fact]
-        public void Constructor_WithEmptyChoreId_ThrowsArgumentException()
+        public void Constructor_WithEmptyChoreId_ThrowsDomainValidationException()
         {
             // Arrange & Act
             var act = () => new ChoreAssignment(_tenantId, Guid.Empty, _dueDate);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Chore ID cannot be empty.*");
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Chore ID cannot be empty.");
         }
     }
 }
