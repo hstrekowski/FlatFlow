@@ -3,7 +3,7 @@ using FlatFlow.Domain.Enums;
 using FlatFlow.Domain.ValueObjects;
 using FluentAssertions;
 
-namespace FlatFlow.Domain.UnitTests
+namespace FlatFlow.Domain.UnitTests.Common
 {
     public class BaseEntityTests
     {

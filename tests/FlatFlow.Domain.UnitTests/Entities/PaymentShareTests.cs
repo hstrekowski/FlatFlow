@@ -3,7 +3,7 @@ using FlatFlow.Domain.Enums;
 using FlatFlow.Domain.Exceptions;
 using FluentAssertions;
 
-namespace FlatFlow.Domain.UnitTests
+namespace FlatFlow.Domain.UnitTests.Entities
 {
     public class PaymentShareTests
     {

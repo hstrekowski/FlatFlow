@@ -4,7 +4,7 @@ using FlatFlow.Domain.Exceptions;
 using FlatFlow.Domain.ValueObjects;
 using FluentAssertions;
 
-namespace FlatFlow.Domain.UnitTests
+namespace FlatFlow.Domain.UnitTests.Entities
 {
     public class FlatTests
     {
