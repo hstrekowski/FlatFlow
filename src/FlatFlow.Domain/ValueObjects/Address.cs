@@ -4,10 +4,10 @@ namespace FlatFlow.Domain.ValueObjects
 {
     public record Address
     {
-        public string Street { get; init; }
-        public string City { get; init; }
-        public string ZipCode { get; init; }
-        public string Country { get; init; }
+        public string Street { get; }
+        public string City { get; }
+        public string ZipCode { get; }
+        public string Country { get; }
 
         public Address(string street, string city, string zipCode, string country)
         {
