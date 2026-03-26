@@ -87,9 +87,6 @@ namespace FlatFlow.Domain.UnitTests.Entities
             var flat = new Flat("My Flat", _validAddress);
 
             // Assert
-            flat.AccessCode.Should().ContainAll(
-                flat.AccessCode.Select(c => c.ToString())
-                    .Where(c => allowedCharacters.Contains(c)));
             flat.AccessCode.ToCharArray().Should().OnlyContain(c => allowedCharacters.Contains(c));
         }
 
