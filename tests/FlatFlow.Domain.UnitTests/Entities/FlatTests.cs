@@ -78,6 +78,22 @@ namespace FlatFlow.Domain.UnitTests.Entities
         }
 
         [Fact]
+        public void Constructor_WhenCalled_GeneratesAccessCodeWithOnlyAllowedCharacters()
+        {
+            // Arrange
+            var allowedCharacters = "ABCDEFGHJKMNPQRSTUVWXYZ2345679";
+
+            // Act
+            var flat = new Flat("My Flat", _validAddress);
+
+            // Assert
+            flat.AccessCode.Should().ContainAll(
+                flat.AccessCode.Select(c => c.ToString())
+                    .Where(c => allowedCharacters.Contains(c)));
+            flat.AccessCode.ToCharArray().Should().OnlyContain(c => allowedCharacters.Contains(c));
+        }
+
+        [Fact]
         public void Constructor_WhenCalled_InitializesEmptyCollections()
         {
             // Arrange & Act
@@ -208,6 +224,7 @@ namespace FlatFlow.Domain.UnitTests.Entities
         public void RefreshAccessCode_WhenCalled_GeneratesValidAccessCode()
         {
             // Arrange
+            var allowedCharacters = "ABCDEFGHJKMNPQRSTUVWXYZ2345679";
             var flat = new Flat("My Flat", _validAddress);
 
             // Act
@@ -215,6 +232,7 @@ namespace FlatFlow.Domain.UnitTests.Entities
 
             // Assert
             flat.AccessCode.Should().HaveLength(8).And.BeUpperCased();
+            flat.AccessCode.ToCharArray().Should().OnlyContain(c => allowedCharacters.Contains(c));
         }
 
         [Theory]
