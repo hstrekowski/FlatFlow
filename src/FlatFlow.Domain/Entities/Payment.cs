@@ -64,6 +64,9 @@ namespace FlatFlow.Domain.Entities
 
         public PaymentShare AddShare(Guid tenantId, decimal shareAmount)
         {
+            if (_paymentShares.Any(s => s.TenantId == tenantId))
+                throw new DomainException($"Tenant '{tenantId}' already has a share in this payment.");
+
             var share = new PaymentShare(tenantId, Id, shareAmount);
             _paymentShares.Add(share);
             return share;

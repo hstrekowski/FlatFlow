@@ -273,7 +273,6 @@ namespace FlatFlow.Domain.UnitTests.Entities
                 .WithMessage("Address cannot be null.");
         }
 
-        // --- AddTenant ---
 
         [Fact]
         public void AddTenant_WithValidData_ReturnsTenantAndAddsToCollection()
@@ -322,7 +321,21 @@ namespace FlatFlow.Domain.UnitTests.Entities
                 .WithMessage("First name cannot be empty.");
         }
 
-        // --- RemoveTenant ---
+        [Fact]
+        public void AddTenant_WithDuplicateUserId_ThrowsDomainException()
+        {
+            // Arrange
+            var flat = new Flat("My Flat", _validAddress);
+            flat.AddTenant("John", "Doe", "john@example.com", "user-123");
+
+            // Act
+            var act = () => flat.AddTenant("Jane", "Doe", "jane@example.com", "user-123");
+
+            // Assert
+            act.Should().Throw<DomainException>()
+                .WithMessage("*user-123*already a tenant*");
+        }
+
 
         [Fact]
         public void RemoveTenant_WithExistingId_RemovesFromCollection()
@@ -351,7 +364,6 @@ namespace FlatFlow.Domain.UnitTests.Entities
             act.Should().Throw<DomainException>();
         }
 
-        // --- AddChore ---
 
         [Fact]
         public void AddChore_WithValidData_ReturnsChoreAndAddsToCollection()
@@ -386,7 +398,6 @@ namespace FlatFlow.Domain.UnitTests.Entities
                 .WithMessage("Chore title cannot be empty.");
         }
 
-        // --- RemoveChore ---
 
         [Fact]
         public void RemoveChore_WithExistingId_RemovesFromCollection()
@@ -415,7 +426,6 @@ namespace FlatFlow.Domain.UnitTests.Entities
             act.Should().Throw<DomainException>();
         }
 
-        // --- AddNote ---
 
         [Fact]
         public void AddNote_WithValidData_ReturnsNoteAndAddsToCollection()
@@ -449,7 +459,6 @@ namespace FlatFlow.Domain.UnitTests.Entities
                 .WithMessage("Author ID cannot be empty.");
         }
 
-        // --- RemoveNote ---
 
         [Fact]
         public void RemoveNote_WithExistingId_RemovesFromCollection()
@@ -478,7 +487,6 @@ namespace FlatFlow.Domain.UnitTests.Entities
             act.Should().Throw<DomainException>();
         }
 
-        // --- AddPayment ---
 
         [Fact]
         public void AddPayment_WithValidData_ReturnsPaymentAndAddsToCollection()
@@ -530,7 +538,6 @@ namespace FlatFlow.Domain.UnitTests.Entities
                 .WithMessage("Created by ID cannot be empty.");
         }
 
-        // --- RemovePayment ---
 
         [Fact]
         public void RemovePayment_WithExistingId_RemovesFromCollection()

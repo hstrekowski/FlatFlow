@@ -67,6 +67,9 @@ namespace FlatFlow.Domain.Entities
 
         public Tenant AddTenant(string firstName, string lastName, string email, string userId, bool isOwner = false)
         {
+            if (_tenants.Any(t => t.UserId == userId))
+                throw new DomainException($"User '{userId}' is already a tenant in this flat.");
+
             var tenant = new Tenant(firstName, lastName, email, userId, Id, isOwner);
             _tenants.Add(tenant);
             return tenant;
