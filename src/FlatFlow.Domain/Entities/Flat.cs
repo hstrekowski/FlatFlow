@@ -54,9 +54,19 @@ namespace FlatFlow.Domain.Entities
             SetUpdatedAt();
         }
 
-        private string GenerateAccessCode()
+        private const string AccessCodeCharacters = "ABCDEFGHJKMNPQRSTUVWXYZ2345679";
+        private const int AccessCodeLength = 8;
+
+        private static string GenerateAccessCode()
         {
-            return Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+            return string.Create(AccessCodeLength, AccessCodeCharacters, (span, chars) =>
+            {
+                var random = Random.Shared;
+                for (var i = 0; i < span.Length; i++)
+                {
+                    span[i] = chars[random.Next(chars.Length)];
+                }
+            });
         }
 
         public void RefreshAccessCode()
@@ -67,6 +77,9 @@ namespace FlatFlow.Domain.Entities
 
         public Tenant AddTenant(string firstName, string lastName, string email, string userId, bool isOwner = false)
         {
+            if (_tenants.Any(t => t.UserId == userId))
+                throw new DomainException($"User '{userId}' is already a tenant in this flat.");
+
             var tenant = new Tenant(firstName, lastName, email, userId, Id, isOwner);
             _tenants.Add(tenant);
             return tenant;

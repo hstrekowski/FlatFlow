@@ -252,7 +252,6 @@ namespace FlatFlow.Domain.UnitTests.Entities
                 .WithMessage("Chore title cannot be empty.");
         }
 
-        // --- AddAssignment ---
 
         [Fact]
         public void AddAssignment_WithValidData_ReturnsAssignmentAndAddsToCollection()
@@ -287,7 +286,39 @@ namespace FlatFlow.Domain.UnitTests.Entities
                 .WithMessage("Tenant ID cannot be empty.");
         }
 
-        // --- RemoveAssignment ---
+        [Fact]
+        public void AddAssignment_WithDuplicateActiveTenant_ThrowsDomainException()
+        {
+            // Arrange
+            var chore = CreateChore();
+            var tenantId = Guid.NewGuid();
+            chore.AddAssignment(tenantId, DateTime.UtcNow.AddDays(7));
+
+            // Act
+            var act = () => chore.AddAssignment(tenantId, DateTime.UtcNow.AddDays(14));
+
+            // Assert
+            act.Should().Throw<DomainException>()
+                .WithMessage("*already has an active assignment*");
+        }
+
+        [Fact]
+        public void AddAssignment_WithCompletedDuplicateTenant_Succeeds()
+        {
+            // Arrange
+            var chore = CreateChore();
+            var tenantId = Guid.NewGuid();
+            var firstAssignment = chore.AddAssignment(tenantId, DateTime.UtcNow.AddDays(7));
+            firstAssignment.Complete();
+
+            // Act
+            var secondAssignment = chore.AddAssignment(tenantId, DateTime.UtcNow.AddDays(14));
+
+            // Assert
+            chore.ChoreAssignments.Should().HaveCount(2);
+            secondAssignment.TenantId.Should().Be(tenantId);
+        }
+
 
         [Fact]
         public void RemoveAssignment_WithExistingId_RemovesFromCollection()

@@ -299,7 +299,6 @@ namespace FlatFlow.Domain.UnitTests.Entities
                 .WithMessage("Payment amount must be greater than zero.");
         }
 
-        // --- AddShare ---
 
         [Fact]
         public void AddShare_WithValidData_ReturnsShareAndAddsToCollection()
@@ -349,7 +348,22 @@ namespace FlatFlow.Domain.UnitTests.Entities
                 .WithMessage("Share amount must be greater than zero.");
         }
 
-        // --- RemoveShare ---
+        [Fact]
+        public void AddShare_WithDuplicateTenantId_ThrowsDomainException()
+        {
+            // Arrange
+            var payment = CreatePayment();
+            var tenantId = Guid.NewGuid();
+            payment.AddShare(tenantId, 50m);
+
+            // Act
+            var act = () => payment.AddShare(tenantId, 30m);
+
+            // Assert
+            act.Should().Throw<DomainException>()
+                .WithMessage("*already has a share*");
+        }
+
 
         [Fact]
         public void RemoveShare_WithExistingId_RemovesFromCollection()

@@ -54,6 +54,9 @@ namespace FlatFlow.Domain.Entities
 
         public ChoreAssignment AddAssignment(Guid tenantId, DateTime dueDate)
         {
+            if (_choreAssignments.Any(a => a.TenantId == tenantId && !a.IsCompleted))
+                throw new DomainException($"Tenant '{tenantId}' already has an active assignment for this chore.");
+
             var assignment = new ChoreAssignment(tenantId, Id, dueDate);
             _choreAssignments.Add(assignment);
             return assignment;
