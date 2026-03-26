@@ -38,6 +38,11 @@ public class UpdateFlatCommandHandlerTests
 
         // Assert
         result.Should().Be(Unit.Value);
+        flat.Name.Should().Be("New Name");
+        flat.Address.Street.Should().Be("New St");
+        flat.Address.City.Should().Be("New City");
+        flat.Address.ZipCode.Should().Be("11-111");
+        flat.Address.Country.Should().Be("New Country");
         _flatRepositoryMock.Verify(r => r.UpdateAsync(flat, It.IsAny<CancellationToken>()), Times.Once);
     }
 
