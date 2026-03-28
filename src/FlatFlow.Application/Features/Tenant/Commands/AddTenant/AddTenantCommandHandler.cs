@@ -21,7 +21,7 @@ public class AddTenantCommandHandler : IRequestHandler<AddTenantCommand, Guid>
         var flat = await _flatRepository.GetByIdWithTenantsAsync(request.FlatId, cancellationToken)
             ?? throw new NotFoundException(nameof(Domain.Entities.Flat), request.FlatId);
 
-        var tenant = flat.AddTenant(request.FirstName, request.LastName, request.Email, request.UserId);
+        var tenant = flat.AddTenant(request.FirstName, request.LastName, request.Email, request.UserId, request.IsOwner);
 
         await _flatRepository.UpdateAsync(flat, cancellationToken);
 

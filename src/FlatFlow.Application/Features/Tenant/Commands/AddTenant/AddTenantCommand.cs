@@ -7,4 +7,5 @@ public record AddTenantCommand(
     string FirstName,
     string LastName,
     string Email,
-    string UserId) : IRequest<Guid>;
+    string UserId,
+    bool IsOwner = false) : IRequest<Guid>;
