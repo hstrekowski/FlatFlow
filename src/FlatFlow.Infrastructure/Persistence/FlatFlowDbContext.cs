@@ -1,10 +1,7 @@
 ﻿using FlatFlow.Domain.Common;
 using FlatFlow.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace FlatFlow.Infrastructure.Persistence
 {
@@ -27,17 +24,11 @@ namespace FlatFlow.Infrastructure.Persistence
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var modifiedEntries = ChangeTracker.Entries<BaseEntity>().Where(e => e.State == EntityState.Modified);
-
-            var methodInfo = typeof(BaseEntity).GetMethod("SetUpdatedAt", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            if (methodInfo != null)
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>().Where(e => e.State == EntityState.Modified))
             {
-                foreach (var entry in modifiedEntries)
-                {
-                    methodInfo.Invoke(entry.Entity, null);
-                }
+                entry.Property(nameof(BaseEntity.UpdatedAt)).CurrentValue = DateTime.UtcNow;
             }
+
             return base.SaveChangesAsync(cancellationToken);
         }
     }
