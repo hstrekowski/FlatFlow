@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FlatFlow.Application\FlatFlow.Application.csproj" />
+    <ProjectReference Include="..\FlatFlow.Domain\FlatFlow.Domain.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
