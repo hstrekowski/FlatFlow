@@ -44,8 +44,8 @@ public class GetTenantsByFlatIdQueryHandlerTests
 
         // Assert
         result.Should().HaveCount(2);
-        result[0].FirstName.Should().Be("Jan");
-        result[1].FirstName.Should().Be("Anna");
+        result.Should().Contain(t => t.FirstName == "Jan" && t.LastName == "Kowalski");
+        result.Should().Contain(t => t.FirstName == "Anna" && t.LastName == "Nowak");
     }
 
     [Fact]

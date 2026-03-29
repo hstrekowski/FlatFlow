@@ -41,6 +41,8 @@ public class UpdateTenantProfileCommandHandlerTests
         result.Should().Be(Unit.Value);
         tenant.FirstName.Should().Be("Adam");
         tenant.LastName.Should().Be("Nowak");
+        tenant.Email.Should().Be("jan@test.com");
+        tenant.IsOwner.Should().BeFalse();
         _tenantRepositoryMock.Verify(r => r.UpdateAsync(tenant, It.IsAny<CancellationToken>()), Times.Once);
     }
 

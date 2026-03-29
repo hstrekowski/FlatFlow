@@ -11,13 +11,18 @@ public class CreateFlatCommandHandlerTests
 {
     private readonly Mock<IFlatRepository> _flatRepositoryMock;
     private readonly CreateFlatCommandHandler _handler;
+    private Domain.Entities.Flat? _capturedFlat;
 
     public CreateFlatCommandHandlerTests()
     {
         _flatRepositoryMock = new Mock<IFlatRepository>();
         _flatRepositoryMock
             .Setup(r => r.AddAsync(It.IsAny<Domain.Entities.Flat>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Domain.Entities.Flat f, CancellationToken _) => f);
+            .ReturnsAsync((Domain.Entities.Flat f, CancellationToken _) =>
+            {
+                _capturedFlat = f;
+                return f;
+            });
 
         _handler = new CreateFlatCommandHandler(
             _flatRepositoryMock.Object,
@@ -25,7 +30,7 @@ public class CreateFlatCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ValidCommand_ShouldReturnGuid()
+    public async Task Handle_ValidCommand_ShouldReturnCreatedFlatId()
     {
         // Arrange
         var command = new CreateFlatCommand("Mieszkanie", "Długa 5", "Kraków", "30-001", "Poland");
@@ -34,11 +39,12 @@ public class CreateFlatCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.Should().NotBeEmpty();
+        _capturedFlat.Should().NotBeNull();
+        result.Should().Be(_capturedFlat!.Id);
     }
 
     [Fact]
-    public async Task Handle_ValidCommand_ShouldCallAddAsync()
+    public async Task Handle_ValidCommand_ShouldCreateFlatWithCorrectProperties()
     {
         // Arrange
         var command = new CreateFlatCommand("Mieszkanie", "Długa 5", "Kraków", "30-001", "Poland");
@@ -50,7 +56,11 @@ public class CreateFlatCommandHandlerTests
         _flatRepositoryMock.Verify(
             r => r.AddAsync(It.Is<Domain.Entities.Flat>(f =>
                 f.Name == "Mieszkanie" &&
-                f.Address.City == "Kraków"),
+                f.Address.Street == "Długa 5" &&
+                f.Address.City == "Kraków" &&
+                f.Address.ZipCode == "30-001" &&
+                f.Address.Country == "Poland" &&
+                f.AccessCode != string.Empty),
             It.IsAny<CancellationToken>()),
             Times.Once);
     }

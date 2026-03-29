@@ -1,6 +1,7 @@
 using FlatFlow.Application.Common.Exceptions;
 using FlatFlow.Application.Contracts.Persistence;
 using FlatFlow.Application.Features.Tenant.Commands.AddTenant;
+using FlatFlow.Domain.Exceptions;
 using FlatFlow.Domain.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -22,7 +23,7 @@ public class AddTenantCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ValidCommand_ShouldReturnTenantId()
+    public async Task Handle_ValidCommand_ShouldReturnTenantIdAndAddToFlat()
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
@@ -36,8 +37,12 @@ public class AddTenantCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.Should().NotBeEmpty();
-        flat.Tenants.Should().ContainSingle(t => t.Email == "jan@test.com");
+        var addedTenant = flat.Tenants.Should().ContainSingle().Subject;
+        result.Should().Be(addedTenant.Id);
+        addedTenant.FirstName.Should().Be("Jan");
+        addedTenant.LastName.Should().Be("Kowalski");
+        addedTenant.Email.Should().Be("jan@test.com");
+        addedTenant.IsOwner.Should().BeFalse();
         _flatRepositoryMock.Verify(r => r.UpdateAsync(flat, It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -56,8 +61,28 @@ public class AddTenantCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.Should().NotBeEmpty();
-        flat.Tenants.Should().ContainSingle(t => t.IsOwner && t.UserId == "user-1");
+        var addedTenant = flat.Tenants.Should().ContainSingle().Subject;
+        result.Should().Be(addedTenant.Id);
+        addedTenant.IsOwner.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Handle_DuplicateUserId_ShouldThrowDomainException()
+    {
+        // Arrange
+        var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
+        flat.AddTenant("Jan", "Kowalski", "jan@test.com", "user-1");
+        _flatRepositoryMock
+            .Setup(r => r.GetByIdWithTenantsAsync(flat.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(flat);
+
+        var command = new AddTenantCommand(flat.Id, "Anna", "Nowak", "anna@test.com", "user-1");
+
+        // Act
+        var act = () => _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowAsync<DomainException>();
     }
 
     [Fact]

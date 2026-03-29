@@ -40,6 +40,9 @@ public class UpdateTenantEmailCommandHandlerTests
         // Assert
         result.Should().Be(Unit.Value);
         tenant.Email.Should().Be("nowy@test.com");
+        tenant.FirstName.Should().Be("Jan");
+        tenant.LastName.Should().Be("Kowalski");
+        tenant.IsOwner.Should().BeFalse();
         _tenantRepositoryMock.Verify(r => r.UpdateAsync(tenant, It.IsAny<CancellationToken>()), Times.Once);
     }
 

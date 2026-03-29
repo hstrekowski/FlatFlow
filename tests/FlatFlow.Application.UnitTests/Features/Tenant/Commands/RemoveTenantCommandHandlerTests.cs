@@ -1,6 +1,7 @@
 using FlatFlow.Application.Common.Exceptions;
 using FlatFlow.Application.Contracts.Persistence;
 using FlatFlow.Application.Features.Tenant.Commands.RemoveTenant;
+using FlatFlow.Domain.Exceptions;
 using FlatFlow.Domain.ValueObjects;
 using FluentAssertions;
 using MediatR;
@@ -41,6 +42,24 @@ public class RemoveTenantCommandHandlerTests
         result.Should().Be(Unit.Value);
         flat.Tenants.Should().BeEmpty();
         _flatRepositoryMock.Verify(r => r.UpdateAsync(flat, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_NonExistentTenantInFlat_ShouldThrowDomainException()
+    {
+        // Arrange
+        var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
+        _flatRepositoryMock
+            .Setup(r => r.GetByIdWithTenantsAsync(flat.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(flat);
+
+        var command = new RemoveTenantCommand(flat.Id, Guid.NewGuid());
+
+        // Act
+        var act = () => _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowAsync<DomainException>();
     }
 
     [Fact]

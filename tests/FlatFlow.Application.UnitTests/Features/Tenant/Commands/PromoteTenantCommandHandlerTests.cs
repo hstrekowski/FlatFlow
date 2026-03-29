@@ -1,6 +1,7 @@
 using FlatFlow.Application.Common.Exceptions;
 using FlatFlow.Application.Contracts.Persistence;
 using FlatFlow.Application.Features.Tenant.Commands.PromoteTenant;
+using FlatFlow.Domain.Exceptions;
 using FlatFlow.Domain.ValueObjects;
 using FluentAssertions;
 using MediatR;
@@ -41,6 +42,25 @@ public class PromoteTenantCommandHandlerTests
         result.Should().Be(Unit.Value);
         tenant.IsOwner.Should().BeTrue();
         _tenantRepositoryMock.Verify(r => r.UpdateAsync(tenant, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_AlreadyOwnerTenant_ShouldThrowDomainException()
+    {
+        // Arrange
+        var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
+        var tenant = flat.AddTenant("Jan", "Kowalski", "jan@test.com", "user-1", true);
+        _tenantRepositoryMock
+            .Setup(r => r.GetByIdAsync(tenant.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(tenant);
+
+        var command = new PromoteTenantCommand(tenant.Id);
+
+        // Act
+        var act = () => _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowAsync<DomainException>();
     }
 
     [Fact]
