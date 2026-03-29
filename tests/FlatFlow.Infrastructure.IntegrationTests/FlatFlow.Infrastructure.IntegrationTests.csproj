@@ -20,6 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\FlatFlow.Application\FlatFlow.Application.csproj" />
+    <ProjectReference Include="..\..\src\FlatFlow.Domain\FlatFlow.Domain.csproj" />
     <ProjectReference Include="..\..\src\FlatFlow.Infrastructure\FlatFlow.Infrastructure.csproj" />
   </ItemGroup>
 
