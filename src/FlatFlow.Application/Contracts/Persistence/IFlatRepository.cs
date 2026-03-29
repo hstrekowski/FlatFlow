@@ -6,6 +6,8 @@ namespace FlatFlow.Application.Contracts.Persistence;
 public interface IFlatRepository : IGenericRepository<Flat>
 {
     Task<Flat?> GetByAccessCodeAsync(string accessCode, CancellationToken ct = default);
+    Task<Flat?> GetByAccessCodeWithTenantsAsync(string accessCode, CancellationToken ct = default);
+    Task<List<Flat>> GetByTenantUserIdAsync(string userId, CancellationToken ct = default);
     Task<Flat?> GetByIdWithTenantsAsync(Guid id, CancellationToken ct = default);
     Task<Flat?> GetByIdWithChoresAsync(Guid id, CancellationToken ct = default);
     Task<Flat?> GetByIdWithPaymentsAsync(Guid id, CancellationToken ct = default);

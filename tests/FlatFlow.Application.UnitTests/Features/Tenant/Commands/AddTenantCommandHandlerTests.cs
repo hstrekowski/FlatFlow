@@ -42,6 +42,25 @@ public class AddTenantCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WithIsOwnerTrue_ShouldCreateOwnerTenant()
+    {
+        // Arrange
+        var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
+        _flatRepositoryMock
+            .Setup(r => r.GetByIdWithTenantsAsync(flat.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(flat);
+
+        var command = new AddTenantCommand(flat.Id, "Jan", "Kowalski", "jan@test.com", "user-1", IsOwner: true);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeEmpty();
+        flat.Tenants.Should().ContainSingle(t => t.IsOwner && t.UserId == "user-1");
+    }
+
+    [Fact]
     public async Task Handle_NonExistingFlat_ShouldThrowNotFoundException()
     {
         // Arrange
