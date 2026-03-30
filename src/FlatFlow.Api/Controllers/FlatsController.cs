@@ -25,6 +25,8 @@ public class FlatsController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Guid>> Create(CreateFlatCommand command)
     {
         var id = await _mediator.Send(command);
@@ -32,6 +34,7 @@ public class FlatsController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(PaginatedResult<FlatDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<PaginatedResult<FlatDto>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var result = await _mediator.Send(new GetAllFlatsQuery(page, pageSize));
@@ -39,6 +42,8 @@ public class FlatsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(FlatDetailDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FlatDetailDto>> GetById(Guid id)
     {
         var result = await _mediator.Send(new GetFlatByIdQuery(id));
@@ -46,6 +51,8 @@ public class FlatsController : ControllerBase
     }
 
     [HttpGet("by-access-code/{code}")]
+    [ProducesResponseType(typeof(FlatDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FlatDto>> GetByAccessCode(string code)
     {
         var result = await _mediator.Send(new GetFlatByAccessCodeQuery(code));
@@ -53,6 +60,7 @@ public class FlatsController : ControllerBase
     }
 
     [HttpGet("by-user/{userId}")]
+    [ProducesResponseType(typeof(List<FlatDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<FlatDto>>> GetByUserId(string userId)
     {
         var result = await _mediator.Send(new GetFlatsByUserIdQuery(userId));
@@ -60,6 +68,9 @@ public class FlatsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Update(Guid id, UpdateFlatCommand command)
     {
         if (id != command.FlatId)
@@ -70,6 +81,8 @@ public class FlatsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Delete(Guid id)
     {
         await _mediator.Send(new DeleteFlatCommand(id));
@@ -77,6 +90,8 @@ public class FlatsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/refresh-access-code")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> RefreshAccessCode(Guid id)
     {
         await _mediator.Send(new RefreshAccessCodeCommand(id));
