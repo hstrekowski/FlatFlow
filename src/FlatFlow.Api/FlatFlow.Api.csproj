@@ -10,11 +10,7 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
+<ItemGroup>
     <ProjectReference Include="..\FlatFlow.Application\FlatFlow.Application.csproj" />
     <ProjectReference Include="..\FlatFlow.Infrastructure\FlatFlow.Infrastructure.csproj" />
   </ItemGroup>

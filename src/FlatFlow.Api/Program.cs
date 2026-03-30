@@ -1,3 +1,6 @@
+using FlatFlow.Api.Middleware;
+using FlatFlow.Application;
+using FlatFlow.Infrastructure;
 
 namespace FlatFlow.Api
 {
@@ -7,24 +10,22 @@ namespace FlatFlow.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            builder.Services.AddApplicationServices();
+            builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddControllers();
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddOpenApi();
 
-            // Build the app
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
             }
 
+            app.UseExceptionHandler(_ => { });
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();
