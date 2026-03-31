@@ -1,11 +1,13 @@
 ﻿using FlatFlow.Domain.Common;
 using FlatFlow.Domain.Entities;
+using FlatFlow.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace FlatFlow.Infrastructure.Persistence
 {
-    public class FlatFlowDbContext : DbContext
+    public class FlatFlowDbContext : IdentityDbContext<ApplicationUser>
     {
         public FlatFlowDbContext(DbContextOptions<FlatFlowDbContext> options) : base(options) { }
         public DbSet<Flat> Flats { get; set; }
