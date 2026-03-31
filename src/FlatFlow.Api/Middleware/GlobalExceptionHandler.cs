@@ -24,6 +24,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             DomainValidationException domainValidationException => HandleDomainValidationException(domainValidationException),
             NotFoundException notFoundException => (HttpStatusCode.NotFound, new { message = notFoundException.Message }),
             ForbiddenException forbiddenException => (HttpStatusCode.Forbidden, new { message = forbiddenException.Message }),
+            AuthenticationException authenticationException => (HttpStatusCode.Unauthorized, new { message = authenticationException.Message }),
             DomainException domainException => (HttpStatusCode.UnprocessableEntity, new { message = domainException.Message }),
             _ => HandleUnhandledException(exception)
         };
