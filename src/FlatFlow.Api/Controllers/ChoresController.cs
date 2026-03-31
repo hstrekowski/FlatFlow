@@ -24,11 +24,12 @@ public class ChoresController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost]
+    // POST api/flats/{flatId}/chores
+    [HttpPost("")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Guid>> Add(Guid flatId, AddChoreCommand command)
+    public async Task<ActionResult<Guid>> Add([FromRoute] Guid flatId, [FromBody] AddChoreCommand command)
     {
         if (flatId != command.FlatId)
             return BadRequest(new { message = "Route flatId does not match command flatId." });
@@ -37,29 +38,32 @@ public class ChoresController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { flatId, choreId = id }, id);
     }
 
-    [HttpGet]
+    // GET api/flats/{flatId}/chores
+    [HttpGet("")]
     [ProducesResponseType(typeof(List<ChoreDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<ChoreDto>>> GetByFlatId(Guid flatId)
+    public async Task<ActionResult<List<ChoreDto>>> GetByFlatId([FromRoute] Guid flatId)
     {
         var result = await _mediator.Send(new GetChoresByFlatIdQuery(flatId));
         return Ok(result);
     }
 
+    // GET api/flats/{flatId}/chores/{choreId}
     [HttpGet("{choreId:guid}")]
     [ProducesResponseType(typeof(ChoreDetailDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ChoreDetailDto>> GetById(Guid flatId, Guid choreId)
+    public async Task<ActionResult<ChoreDetailDto>> GetById([FromRoute] Guid flatId, [FromRoute] Guid choreId)
     {
         var result = await _mediator.Send(new GetChoreByIdQuery(choreId));
         return Ok(result);
     }
 
+    // PUT api/flats/{flatId}/chores/{choreId}
     [HttpPut("{choreId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Update(Guid flatId, Guid choreId, UpdateChoreCommand command)
+    public async Task<ActionResult> Update([FromRoute] Guid flatId, [FromRoute] Guid choreId, [FromBody] UpdateChoreCommand command)
     {
         if (choreId != command.ChoreId)
             return BadRequest(new { message = "Route choreId does not match command choreId." });
@@ -68,20 +72,22 @@ public class ChoresController : ControllerBase
         return NoContent();
     }
 
+    // DELETE api/flats/{flatId}/chores/{choreId}
     [HttpDelete("{choreId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Remove(Guid flatId, Guid choreId)
+    public async Task<ActionResult> Remove([FromRoute] Guid flatId, [FromRoute] Guid choreId)
     {
         await _mediator.Send(new RemoveChoreCommand(flatId, choreId));
         return NoContent();
     }
 
+    // POST api/flats/{flatId}/chores/{choreId}/assignments
     [HttpPost("{choreId:guid}/assignments")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Guid>> AddAssignment(Guid flatId, Guid choreId, AddChoreAssignmentCommand command)
+    public async Task<ActionResult<Guid>> AddAssignment([FromRoute] Guid flatId, [FromRoute] Guid choreId, [FromBody] AddChoreAssignmentCommand command)
     {
         if (choreId != command.ChoreId)
             return BadRequest(new { message = "Route choreId does not match command choreId." });
@@ -90,30 +96,33 @@ public class ChoresController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { flatId, choreId }, id);
     }
 
+    // DELETE api/flats/{flatId}/chores/{choreId}/assignments/{assignmentId}
     [HttpDelete("{choreId:guid}/assignments/{assignmentId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> RemoveAssignment(Guid flatId, Guid choreId, Guid assignmentId)
+    public async Task<ActionResult> RemoveAssignment([FromRoute] Guid flatId, [FromRoute] Guid choreId, [FromRoute] Guid assignmentId)
     {
         await _mediator.Send(new RemoveChoreAssignmentCommand(choreId, assignmentId));
         return NoContent();
     }
 
+    // POST api/flats/{flatId}/chores/{choreId}/assignments/{assignmentId}/complete
     [HttpPost("{choreId:guid}/assignments/{assignmentId:guid}/complete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<ActionResult> CompleteAssignment(Guid flatId, Guid choreId, Guid assignmentId)
+    public async Task<ActionResult> CompleteAssignment([FromRoute] Guid flatId, [FromRoute] Guid choreId, [FromRoute] Guid assignmentId)
     {
         await _mediator.Send(new CompleteChoreAssignmentCommand(choreId, assignmentId));
         return NoContent();
     }
 
+    // POST api/flats/{flatId}/chores/{choreId}/assignments/{assignmentId}/reopen
     [HttpPost("{choreId:guid}/assignments/{assignmentId:guid}/reopen")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<ActionResult> ReopenAssignment(Guid flatId, Guid choreId, Guid assignmentId)
+    public async Task<ActionResult> ReopenAssignment([FromRoute] Guid flatId, [FromRoute] Guid choreId, [FromRoute] Guid assignmentId)
     {
         await _mediator.Send(new ReopenChoreAssignmentCommand(choreId, assignmentId));
         return NoContent();
