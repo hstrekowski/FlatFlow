@@ -1,5 +1,4 @@
 using FlatFlow.Application.Features.Tenant.Commands.AddTenant;
-using FlatFlow.Application.Features.Tenant.Commands.JoinFlat;
 using FlatFlow.Application.Features.Tenant.Commands.PromoteTenant;
 using FlatFlow.Application.Features.Tenant.Commands.RemoveTenant;
 using FlatFlow.Application.Features.Tenant.Commands.RevokeTenantOwnership;
@@ -38,17 +37,7 @@ public class TenantsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { flatId, tenantId = id }, id);
     }
 
-    [HttpPost("join")]
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Guid>> Join(Guid flatId, JoinFlatCommand command)
-    {
-        var id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetById), new { flatId, tenantId = id }, id);
-    }
-
-    [HttpGet]
+[HttpGet]
     [ProducesResponseType(typeof(List<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<TenantDto>>> GetByFlatId(Guid flatId)
