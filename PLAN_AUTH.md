@@ -100,6 +100,8 @@ API layer is complete (40 endpoints, 5 controllers). All endpoints are currently
 | `GET /me` | GetProfile | Get current user profile |
 | `PUT /me` | UpdateProfile | Update firstName, lastName, email |
 
+**Note:** `PUT /me` should also propagate FirstName/LastName/Email changes to all Tenant records for that user (query by UserId). Without this, ApplicationUser and Tenant data can drift apart. Done in the same handler for simplicity — a domain event approach would be cleaner but overkill for this scope.
+
 ---
 
 ## Phase 4: Protect All Endpoints
