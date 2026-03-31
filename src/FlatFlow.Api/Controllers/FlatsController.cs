@@ -3,6 +3,7 @@ using FlatFlow.Application.Features.Flat.Commands.CreateFlat;
 using FlatFlow.Application.Features.Flat.Commands.DeleteFlat;
 using FlatFlow.Application.Features.Flat.Commands.RefreshAccessCode;
 using FlatFlow.Application.Features.Flat.Commands.UpdateFlat;
+using FlatFlow.Application.Features.Tenant.Commands.JoinFlat;
 using FlatFlow.Application.Features.Flat.Queries.DTOs;
 using FlatFlow.Application.Features.Flat.Queries.GetAllFlats;
 using FlatFlow.Application.Features.Flat.Queries.GetFlatByAccessCode;
@@ -96,5 +97,15 @@ public class FlatsController : ControllerBase
     {
         await _mediator.Send(new RefreshAccessCodeCommand(id));
         return NoContent();
+    }
+
+    [HttpPost("join")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Guid>> Join(JoinFlatCommand command)
+    {
+        var id = await _mediator.Send(command);
+        return Ok(id);
     }
 }
