@@ -19,6 +19,15 @@ namespace FlatFlow.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes()
+                .Where(e => typeof(BaseEntity).IsAssignableFrom(e.ClrType)))
+            {
+                modelBuilder.Entity(entityType.ClrType)
+                    .Property(nameof(BaseEntity.Id))
+                    .ValueGeneratedNever();
+            }
+
             base.OnModelCreating(modelBuilder);
         }
 
