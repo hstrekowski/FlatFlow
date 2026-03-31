@@ -129,6 +129,18 @@ Application layer (35 commands, 16 queries) and Infrastructure layer are complet
 - Update/Delete return `NoContent()` (204)
 - No try/catch in controllers — middleware handles exceptions globally
 
+## Postman Testing
+
+After each controller phase, create a corresponding **Postman folder** with all requests:
+
+- `📁 Flats` — after Phase 2
+- `📁 Tenants` — after Phase 3
+- `📁 Chores` — after Phase 4
+- `📁 Payments` — after Phase 5
+- `📁 Notes` — after Phase 6
+
+Collection uses `{{baseUrl}}` variable. Export to `docs/FlatFlow.postman_collection.json` after all phases are done.
+
 ## Execution Order
 
-Phase 1 → 2 → 3 → 4 → 5 → 6. After each phase: build + verify.
+Phase 1 → 2 → 3 → 4 → 5 → 6. After each phase: build + verify + add Postman folder.
