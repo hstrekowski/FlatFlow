@@ -31,8 +31,8 @@ public class GetChoresByFlatIdQueryHandlerTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore1 = flat.AddChore("Sprzątanie", "Opis 1", ChoreFrequency.Weekly);
-        var chore2 = flat.AddChore("Gotowanie", "Opis 2", ChoreFrequency.Daily);
+        var chore1 = flat.AddChore("Sprzątanie", "Opis 1", ChoreFrequency.Weekly, Guid.NewGuid());
+        var chore2 = flat.AddChore("Gotowanie", "Opis 2", ChoreFrequency.Daily, Guid.NewGuid());
 
         _choreRepositoryMock
             .Setup(r => r.GetByFlatIdAsync(flat.Id, It.IsAny<CancellationToken>()))

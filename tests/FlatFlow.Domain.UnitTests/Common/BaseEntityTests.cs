@@ -24,7 +24,7 @@ namespace FlatFlow.Domain.UnitTests.Common
         {
             // Arrange
             var flat = new Flat("My Flat", _validAddress);
-            var chore = flat.AddChore("Title", "Desc", ChoreFrequency.Once);
+            var chore = flat.AddChore("Title", "Desc", ChoreFrequency.Once, Guid.NewGuid());
 
             // Act
             var found = flat.Chores.First(c => c.Id == chore.Id);
@@ -49,7 +49,7 @@ namespace FlatFlow.Domain.UnitTests.Common
         {
             // Arrange
             var flat = new Flat("My Flat", _validAddress);
-            var chore = new Chore("Title", "Desc", ChoreFrequency.Once, Guid.NewGuid());
+            var chore = new Chore("Title", "Desc", ChoreFrequency.Once, Guid.NewGuid(), Guid.NewGuid());
 
             // Act & Assert
             flat.Equals(chore).Should().BeFalse();
@@ -70,7 +70,7 @@ namespace FlatFlow.Domain.UnitTests.Common
         {
             // Arrange
             var flat = new Flat("My Flat", _validAddress);
-            var chore = flat.AddChore("Title", "Desc", ChoreFrequency.Once);
+            var chore = flat.AddChore("Title", "Desc", ChoreFrequency.Once, Guid.NewGuid());
             var found = flat.Chores.First(c => c.Id == chore.Id);
 
             // Act & Assert

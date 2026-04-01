@@ -92,9 +92,9 @@ namespace FlatFlow.Domain.Entities
             _tenants.Remove(tenant);
         }
 
-        public Chore AddChore(string title, string description, ChoreFrequency frequency)
+        public Chore AddChore(string title, string description, ChoreFrequency frequency, Guid createdById)
         {
-            var chore = new Chore(title, description, frequency, Id);
+            var chore = new Chore(title, description, frequency, Id, createdById);
             _chores.Add(chore);
             return chore;
         }

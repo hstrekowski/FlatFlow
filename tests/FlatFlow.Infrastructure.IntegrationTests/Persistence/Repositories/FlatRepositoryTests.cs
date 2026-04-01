@@ -125,7 +125,8 @@ public class FlatRepositoryTests : IDisposable
     {
         // Arrange
         var flat = CreateFlat();
-        flat.AddChore("Clean kitchen", "Wipe counters", ChoreFrequency.Weekly);
+        var tenant = flat.AddTenant("John", "Doe", "john@test.com", "user-1");
+        flat.AddChore("Clean kitchen", "Wipe counters", ChoreFrequency.Weekly, tenant.Id);
         _context.Flats.Add(flat);
         await _context.SaveChangesAsync();
 
@@ -188,7 +189,7 @@ public class FlatRepositoryTests : IDisposable
         // Arrange
         var flat = CreateFlat();
         var tenant = flat.AddTenant("John", "Doe", "john@test.com", "user-1");
-        var chore = flat.AddChore("Clean", "Description", ChoreFrequency.Daily);
+        var chore = flat.AddChore("Clean", "Description", ChoreFrequency.Daily, tenant.Id);
         chore.AddAssignment(tenant.Id, DateTime.UtcNow.AddDays(1));
         var payment = flat.AddPayment("Rent", 1000m, DateTime.UtcNow.AddDays(30), tenant.Id);
         payment.AddShare(tenant.Id, 500m);

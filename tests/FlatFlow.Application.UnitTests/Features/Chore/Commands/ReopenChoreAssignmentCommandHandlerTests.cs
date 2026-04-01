@@ -29,7 +29,7 @@ public class ReopenChoreAssignmentCommandHandlerTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
         var assignment = chore.AddAssignment(Guid.NewGuid(), DateTime.UtcNow.AddDays(7));
         assignment.Complete();
         _choreRepositoryMock
@@ -53,7 +53,7 @@ public class ReopenChoreAssignmentCommandHandlerTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
         var assignment = chore.AddAssignment(Guid.NewGuid(), DateTime.UtcNow.AddDays(7));
         _choreRepositoryMock
             .Setup(r => r.GetByIdWithAssignmentsAsync(chore.Id, It.IsAny<CancellationToken>()))
@@ -73,7 +73,7 @@ public class ReopenChoreAssignmentCommandHandlerTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
         _choreRepositoryMock
             .Setup(r => r.GetByIdWithAssignmentsAsync(chore.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(chore);

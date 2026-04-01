@@ -31,7 +31,8 @@ public class AddChoreCommandHandlerTests
             .Setup(r => r.GetByIdWithChoresAsync(flat.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(flat);
 
-        var command = new AddChoreCommand(flat.Id, "Sprzątanie", "Posprzątać kuchnię", ChoreFrequency.Weekly);
+        var createdById = Guid.NewGuid();
+        var command = new AddChoreCommand(flat.Id, "Sprzątanie", "Posprzątać kuchnię", ChoreFrequency.Weekly, createdById);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -54,7 +55,7 @@ public class AddChoreCommandHandlerTests
             .Setup(r => r.GetByIdWithChoresAsync(flatId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Domain.Entities.Flat?)null);
 
-        var command = new AddChoreCommand(flatId, "Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        var command = new AddChoreCommand(flatId, "Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
 
         // Act
         var act = () => _handler.Handle(command, CancellationToken.None);

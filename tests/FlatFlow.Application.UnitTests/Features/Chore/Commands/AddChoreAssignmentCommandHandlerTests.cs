@@ -28,7 +28,7 @@ public class AddChoreAssignmentCommandHandlerTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
         var tenantId = Guid.NewGuid();
         var dueDate = DateTime.UtcNow.AddDays(7);
         _choreRepositoryMock
@@ -53,7 +53,7 @@ public class AddChoreAssignmentCommandHandlerTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
         var tenantId = Guid.NewGuid();
         chore.AddAssignment(tenantId, DateTime.UtcNow.AddDays(7));
         _choreRepositoryMock

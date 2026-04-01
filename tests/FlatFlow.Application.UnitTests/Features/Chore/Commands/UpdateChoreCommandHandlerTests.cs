@@ -28,7 +28,7 @@ public class UpdateChoreCommandHandlerTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore = flat.AddChore("Old Title", "Old Description", ChoreFrequency.Weekly);
+        var chore = flat.AddChore("Old Title", "Old Description", ChoreFrequency.Weekly, Guid.NewGuid());
         _choreRepositoryMock
             .Setup(r => r.GetByIdAsync(chore.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(chore);

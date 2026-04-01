@@ -387,12 +387,14 @@ namespace FlatFlow.Domain.UnitTests.Entities
             var flat = new Flat("My Flat", _validAddress);
 
             // Act
-            var chore = flat.AddChore("Take out trash", "Use green bin", ChoreFrequency.Weekly);
+            var createdById = Guid.NewGuid();
+            var chore = flat.AddChore("Take out trash", "Use green bin", ChoreFrequency.Weekly, createdById);
 
             // Assert
             chore.Should().NotBeNull();
             chore.Title.Should().Be("Take out trash");
             chore.FlatId.Should().Be(flat.Id);
+            chore.CreatedById.Should().Be(createdById);
             flat.Chores.Should().ContainSingle().Which.Should().Be(chore);
         }
 
@@ -406,7 +408,7 @@ namespace FlatFlow.Domain.UnitTests.Entities
             var flat = new Flat("My Flat", _validAddress);
 
             // Act
-            var act = () => flat.AddChore(title!, "Description", ChoreFrequency.Once);
+            var act = () => flat.AddChore(title!, "Description", ChoreFrequency.Once, Guid.NewGuid());
 
             // Assert
             act.Should().Throw<DomainValidationException>()
@@ -419,7 +421,7 @@ namespace FlatFlow.Domain.UnitTests.Entities
         {
             // Arrange
             var flat = new Flat("My Flat", _validAddress);
-            var chore = flat.AddChore("Title", "Desc", ChoreFrequency.Once);
+            var chore = flat.AddChore("Title", "Desc", ChoreFrequency.Once, Guid.NewGuid());
 
             // Act
             flat.RemoveChore(chore.Id);

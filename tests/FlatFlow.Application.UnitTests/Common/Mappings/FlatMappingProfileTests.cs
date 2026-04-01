@@ -105,7 +105,7 @@ public class FlatMappingProfileTests
         var address = new Address("Długa 5", "Kraków", "30-001", "Poland");
         var flat = new Flat("Mieszkanie", address);
         var tenant = flat.AddTenant("Jan", "Kowalski", "jan@mail.com", "user-1");
-        flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
         flat.AddPayment("Czynsz", 1000m, DateTime.UtcNow, tenant.Id);
         flat.AddNote("Notatka", "Treść", tenant.Id);
 

@@ -8,9 +8,10 @@ namespace FlatFlow.Domain.UnitTests.Entities
     public class ChoreTests
     {
         private readonly Guid _flatId = Guid.NewGuid();
+        private readonly Guid _createdById = Guid.NewGuid();
 
         private Chore CreateChore()
-            => new("Take out trash", "Use the green bin", ChoreFrequency.Weekly, _flatId);
+            => new("Take out trash", "Use the green bin", ChoreFrequency.Weekly, _flatId, _createdById);
 
         [Theory]
         [InlineData("Take out trash")]
@@ -19,7 +20,7 @@ namespace FlatFlow.Domain.UnitTests.Entities
         public void Constructor_WithValidTitle_SetsTitle(string title)
         {
             // Arrange & Act
-            var chore = new Chore(title, "Description", ChoreFrequency.Once, _flatId);
+            var chore = new Chore(title, "Description", ChoreFrequency.Once, _flatId, _createdById);
 
             // Assert
             chore.Title.Should().Be(title);
@@ -31,7 +32,7 @@ namespace FlatFlow.Domain.UnitTests.Entities
         public void Constructor_WithDescription_SetsDescription(string description)
         {
             // Arrange & Act
-            var chore = new Chore("Title", description, ChoreFrequency.Once, _flatId);
+            var chore = new Chore("Title", description, ChoreFrequency.Once, _flatId, _createdById);
 
             // Assert
             chore.Description.Should().Be(description);
@@ -45,7 +46,7 @@ namespace FlatFlow.Domain.UnitTests.Entities
         public void Constructor_WithFrequency_SetsFrequency(ChoreFrequency frequency)
         {
             // Arrange & Act
-            var chore = new Chore("Title", "Description", frequency, _flatId);
+            var chore = new Chore("Title", "Description", frequency, _flatId, _createdById);
 
             // Assert
             chore.Frequency.Should().Be(frequency);
@@ -59,6 +60,16 @@ namespace FlatFlow.Domain.UnitTests.Entities
 
             // Assert
             chore.FlatId.Should().Be(_flatId);
+        }
+
+        [Fact]
+        public void Constructor_WithCreatedById_SetsCreatedById()
+        {
+            // Arrange & Act
+            var chore = CreateChore();
+
+            // Assert
+            chore.CreatedById.Should().Be(_createdById);
         }
 
         [Fact]
@@ -217,7 +228,7 @@ namespace FlatFlow.Domain.UnitTests.Entities
         public void Constructor_WithInvalidTitle_ThrowsDomainValidationException(string? title)
         {
             // Arrange & Act
-            var act = () => new Chore(title!, "Description", ChoreFrequency.Once, _flatId);
+            var act = () => new Chore(title!, "Description", ChoreFrequency.Once, _flatId, _createdById);
 
             // Assert
             act.Should().Throw<DomainValidationException>()
@@ -228,11 +239,22 @@ namespace FlatFlow.Domain.UnitTests.Entities
         public void Constructor_WithEmptyFlatId_ThrowsDomainValidationException()
         {
             // Arrange & Act
-            var act = () => new Chore("Title", "Description", ChoreFrequency.Once, Guid.Empty);
+            var act = () => new Chore("Title", "Description", ChoreFrequency.Once, Guid.Empty, _createdById);
 
             // Assert
             act.Should().Throw<DomainValidationException>()
                 .WithMessage("Flat ID cannot be empty.");
+        }
+
+        [Fact]
+        public void Constructor_WithEmptyCreatedById_ThrowsDomainValidationException()
+        {
+            // Arrange & Act
+            var act = () => new Chore("Title", "Description", ChoreFrequency.Once, _flatId, Guid.Empty);
+
+            // Assert
+            act.Should().Throw<DomainValidationException>()
+                .WithMessage("Created by ID cannot be empty.");
         }
 
         [Theory]

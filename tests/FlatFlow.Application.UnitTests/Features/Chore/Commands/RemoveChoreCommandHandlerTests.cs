@@ -29,7 +29,7 @@ public class RemoveChoreCommandHandlerTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
         _flatRepositoryMock
             .Setup(r => r.GetByIdWithChoresAsync(flat.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(flat);
