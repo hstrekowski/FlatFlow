@@ -1,6 +1,8 @@
+using FlatFlow.Api.Authorization;
 using FlatFlow.Api.Middleware;
 using FlatFlow.Application;
 using FlatFlow.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FlatFlow.Api
 {
@@ -12,6 +14,11 @@ namespace FlatFlow.Api
 
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IAuthorizationHandler, FlatAuthorizationHandler>();
+            builder.Services.AddAuthorizationBuilder()
+                .AddPolicy("FlatMember", policy => policy.AddRequirements(new FlatMemberRequirement()))
+                .AddPolicy("FlatOwner", policy => policy.AddRequirements(new FlatOwnerRequirement()));
             builder.Services.AddControllers();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddOpenApi();

@@ -47,6 +47,7 @@ public class FlatsController : ControllerBase
     }
 
     // GET api/flats/{id}
+    [Authorize(Policy = "FlatMember")]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(FlatDetailDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -76,6 +77,7 @@ public class FlatsController : ControllerBase
     }
 
     // PUT api/flats/{id}
+    [Authorize(Policy = "FlatOwner")]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -90,6 +92,7 @@ public class FlatsController : ControllerBase
     }
 
     // DELETE api/flats/{id}
+    [Authorize(Policy = "FlatOwner")]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -100,6 +103,7 @@ public class FlatsController : ControllerBase
     }
 
     // POST api/flats/{id}/refresh-access-code
+    [Authorize(Policy = "FlatOwner")]
     [HttpPost("{id:guid}/refresh-access-code")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

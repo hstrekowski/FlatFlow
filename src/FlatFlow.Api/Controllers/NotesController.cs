@@ -13,7 +13,7 @@ namespace FlatFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/flats/{flatId:guid}/notes")]
-[Authorize]
+[Authorize(Policy = "FlatMember")]
 public class NotesController : ControllerBase
 {
     private readonly IMediator _mediator;

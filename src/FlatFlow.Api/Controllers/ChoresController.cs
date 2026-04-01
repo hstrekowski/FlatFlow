@@ -16,7 +16,7 @@ namespace FlatFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/flats/{flatId:guid}/chores")]
-[Authorize]
+[Authorize(Policy = "FlatMember")]
 public class ChoresController : ControllerBase
 {
     private readonly IMediator _mediator;
