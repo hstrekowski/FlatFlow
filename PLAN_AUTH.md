@@ -165,6 +165,9 @@ After this phase: no endpoint works without a valid JWT (except register/login).
 - `CreateFlatCommand` — remove need for manual tenant creation, handler auto-creates owner Tenant using ICurrentUserService
 - `JoinFlatCommand` — simplify to just AccessCode, handler pulls user data from ICurrentUserService
 - `AddTenantCommand` — owner-only (manual add), still takes profile data
+- Remove `UpdateTenantProfile` and `UpdateTenantEmail` endpoints — tenant profile data now syncs from ApplicationUser via `PUT /api/auth/me`, so manual editing by owner is redundant and would get overwritten on next profile sync.
+- Replace `GET /api/flats/by-user/{userId}` with `GET /api/flats/my` — read userId from token instead of route. No reason for a user to browse another user's flats.
+- Remove `POST .../tenants` (AddTenant) — users join flats via AccessCode, owner manually adding tenants by userId is not a valid use case with auth.
 
 ---
 
