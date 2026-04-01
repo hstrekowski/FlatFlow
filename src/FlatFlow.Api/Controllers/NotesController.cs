@@ -6,12 +6,14 @@ using FlatFlow.Application.Features.Note.Queries.DTOs;
 using FlatFlow.Application.Features.Note.Queries.GetNoteById;
 using FlatFlow.Application.Features.Note.Queries.GetNotesByFlatId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlatFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/flats/{flatId:guid}/notes")]
+[Authorize]
 public class NotesController : ControllerBase
 {
     private readonly IMediator _mediator;

@@ -10,12 +10,14 @@ using FlatFlow.Application.Features.Payment.Queries.DTOs;
 using FlatFlow.Application.Features.Payment.Queries.GetPaymentById;
 using FlatFlow.Application.Features.Payment.Queries.GetPaymentsByFlatId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlatFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/flats/{flatId:guid}/payments")]
+[Authorize]
 public class PaymentsController : ControllerBase
 {
     private readonly IMediator _mediator;

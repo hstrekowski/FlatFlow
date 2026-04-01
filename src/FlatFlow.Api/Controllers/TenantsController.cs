@@ -8,12 +8,14 @@ using FlatFlow.Application.Features.Tenant.Queries.DTOs;
 using FlatFlow.Application.Features.Tenant.Queries.GetTenantById;
 using FlatFlow.Application.Features.Tenant.Queries.GetTenantsByFlatId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlatFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/flats/{flatId:guid}/tenants")]
+[Authorize]
 public class TenantsController : ControllerBase
 {
     private readonly IMediator _mediator;

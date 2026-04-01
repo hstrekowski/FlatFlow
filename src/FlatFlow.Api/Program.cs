@@ -28,6 +28,7 @@ namespace FlatFlow.Api
 
             app.UseExceptionHandler(_ => { });
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
 
