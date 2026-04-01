@@ -17,7 +17,7 @@ namespace FlatFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/flats/{flatId:guid}/payments")]
-[Authorize]
+[Authorize(Policy = "FlatMember")]
 public class PaymentsController : ControllerBase
 {
     private readonly IMediator _mediator;

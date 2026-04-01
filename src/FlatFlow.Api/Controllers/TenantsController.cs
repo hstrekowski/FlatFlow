@@ -15,7 +15,7 @@ namespace FlatFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/flats/{flatId:guid}/tenants")]
-[Authorize]
+[Authorize(Policy = "FlatMember")]
 public class TenantsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -26,6 +26,7 @@ public class TenantsController : ControllerBase
     }
 
     // POST api/flats/{flatId}/tenants
+    [Authorize(Policy = "FlatOwner")]
     [HttpPost("")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -61,6 +62,7 @@ public class TenantsController : ControllerBase
     }
 
     // PUT api/flats/{flatId}/tenants/{tenantId}/profile
+    [Authorize(Policy = "FlatOwner")]
     [HttpPut("{tenantId:guid}/profile")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -75,6 +77,7 @@ public class TenantsController : ControllerBase
     }
 
     // PUT api/flats/{flatId}/tenants/{tenantId}/email
+    [Authorize(Policy = "FlatOwner")]
     [HttpPut("{tenantId:guid}/email")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -89,6 +92,7 @@ public class TenantsController : ControllerBase
     }
 
     // POST api/flats/{flatId}/tenants/{tenantId}/promote
+    [Authorize(Policy = "FlatOwner")]
     [HttpPost("{tenantId:guid}/promote")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -100,6 +104,7 @@ public class TenantsController : ControllerBase
     }
 
     // POST api/flats/{flatId}/tenants/{tenantId}/revoke-ownership
+    [Authorize(Policy = "FlatOwner")]
     [HttpPost("{tenantId:guid}/revoke-ownership")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -111,6 +116,7 @@ public class TenantsController : ControllerBase
     }
 
     // DELETE api/flats/{flatId}/tenants/{tenantId}
+    [Authorize(Policy = "FlatOwner")]
     [HttpDelete("{tenantId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
