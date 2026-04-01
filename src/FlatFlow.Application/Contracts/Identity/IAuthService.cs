@@ -6,5 +6,7 @@ namespace FlatFlow.Application.Contracts.Identity
     {
         Task<AuthResponse> RegisterAsync(RegistrationRequest request);
         Task<AuthResponse> LoginAsync(AuthRequest request);
+        Task<UserProfile> GetUserAsync(string userId);
+        Task UpdateUserAsync(string userId, string firstName, string lastName, string email);
     }
 }

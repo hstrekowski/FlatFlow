@@ -71,6 +71,35 @@ namespace FlatFlow.Infrastructure.Identity
             };
         }
 
+        public async Task<UserProfile> GetUserAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId)
+                ?? throw new AuthenticationException($"User with ID '{userId}' not found.");
+
+            return new UserProfile
+            {
+                UserId = user.Id,
+                Email = user.Email!,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+        }
+
+        public async Task UpdateUserAsync(string userId, string firstName, string lastName, string email)
+        {
+            var user = await _userManager.FindByIdAsync(userId)
+                ?? throw new AuthenticationException($"User with ID '{userId}' not found.");
+
+            user.FirstName = firstName;
+            user.LastName = lastName;
+            user.Email = email;
+            user.UserName = email;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                throw new AuthenticationException($"Profile update failed: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        }
+
         private string GenerateJwtToken(ApplicationUser user)
         {
             var claims = new[]
