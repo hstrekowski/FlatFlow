@@ -10,12 +10,14 @@ using FlatFlow.Application.Features.Flat.Queries.GetFlatById;
 using FlatFlow.Application.Features.Flat.Queries.GetFlatsByUserId;
 using FlatFlow.Application.Features.Tenant.Commands.JoinFlat;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlatFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/flats")]
+[Authorize]
 public class FlatsController : ControllerBase
 {
     private readonly IMediator _mediator;

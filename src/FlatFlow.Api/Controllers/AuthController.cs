@@ -5,6 +5,7 @@ using FlatFlow.Application.Features.Auth.Commands.UpdateProfile;
 using FlatFlow.Application.Features.Auth.Queries.DTOs;
 using FlatFlow.Application.Features.Auth.Queries.GetProfile;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -12,6 +13,7 @@ namespace FlatFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/auth")]
+[Authorize]
 public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -22,6 +24,7 @@ public class AuthController : ControllerBase
     }
 
     // POST api/auth/register
+    [AllowAnonymous]
     [HttpPost("register")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -33,6 +36,7 @@ public class AuthController : ControllerBase
     }
 
     // POST api/auth/login
+    [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

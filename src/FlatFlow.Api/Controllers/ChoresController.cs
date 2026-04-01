@@ -9,12 +9,14 @@ using FlatFlow.Application.Features.Chore.Queries.DTOs;
 using FlatFlow.Application.Features.Chore.Queries.GetChoreById;
 using FlatFlow.Application.Features.Chore.Queries.GetChoresByFlatId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlatFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/flats/{flatId:guid}/chores")]
+[Authorize]
 public class ChoresController : ControllerBase
 {
     private readonly IMediator _mediator;
