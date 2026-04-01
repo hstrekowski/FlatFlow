@@ -23,4 +23,10 @@ public class TenantRepository : GenericRepository<Tenant>, ITenantRepository
             .Where(t => t.UserId == userId)
             .ToListAsync(ct);
     }
+
+    public async Task<Tenant?> GetByUserIdAndFlatIdAsync(string userId, Guid flatId, CancellationToken ct = default)
+    {
+        return await _context.Tenants
+            .FirstOrDefaultAsync(t => t.UserId == userId && t.FlatId == flatId, ct);
+    }
 }
