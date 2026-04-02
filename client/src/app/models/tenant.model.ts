@@ -1,0 +1,8 @@
+export interface TenantDto {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isOwner: boolean;
+  userId: string;
+}
