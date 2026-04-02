@@ -1,4 +1,5 @@
 using FlatFlow.Application.Common.Exceptions;
+using FlatFlow.Application.Contracts.Identity;
 using FlatFlow.Application.Contracts.Persistence;
 using FlatFlow.Application.Features.Note.Commands.RemoveNote;
 using FlatFlow.Domain.Exceptions;
@@ -12,14 +13,25 @@ namespace FlatFlow.Application.UnitTests.Features.Note.Commands;
 
 public class RemoveNoteCommandHandlerTests
 {
+    private const string TestUserId = "test-user-id";
     private readonly Mock<IFlatRepository> _flatRepositoryMock;
+    private readonly Mock<ITenantRepository> _tenantRepositoryMock;
+    private readonly Mock<ICurrentUserService> _currentUserServiceMock;
     private readonly RemoveNoteCommandHandler _handler;
 
     public RemoveNoteCommandHandlerTests()
     {
         _flatRepositoryMock = new Mock<IFlatRepository>();
+        _tenantRepositoryMock = new Mock<ITenantRepository>();
+        _currentUserServiceMock = new Mock<ICurrentUserService>();
+        _currentUserServiceMock.Setup(s => s.UserId).Returns(TestUserId);
+        _tenantRepositoryMock
+            .Setup(r => r.GetByUserIdAndFlatIdAsync(TestUserId, It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Domain.Entities.Tenant("Owner", "Test", "owner@test.com", TestUserId, Guid.NewGuid(), isOwner: true));
         _handler = new RemoveNoteCommandHandler(
             _flatRepositoryMock.Object,
+            _tenantRepositoryMock.Object,
+            _currentUserServiceMock.Object,
             Mock.Of<ILogger<RemoveNoteCommandHandler>>());
     }
 
@@ -45,7 +57,7 @@ public class RemoveNoteCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_NonExistentNoteInFlat_ShouldThrowDomainException()
+    public async Task Handle_NonExistentNoteInFlat_ShouldThrowNotFoundException()
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
@@ -59,7 +71,7 @@ public class RemoveNoteCommandHandlerTests
         var act = () => _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<DomainException>();
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 
     [Fact]

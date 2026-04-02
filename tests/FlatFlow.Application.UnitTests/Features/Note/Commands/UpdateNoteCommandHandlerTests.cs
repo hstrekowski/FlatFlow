@@ -1,4 +1,5 @@
 using FlatFlow.Application.Common.Exceptions;
+using FlatFlow.Application.Contracts.Identity;
 using FlatFlow.Application.Contracts.Persistence;
 using FlatFlow.Application.Features.Note.Commands.UpdateNote;
 using FlatFlow.Domain.ValueObjects;
@@ -11,14 +12,25 @@ namespace FlatFlow.Application.UnitTests.Features.Note.Commands;
 
 public class UpdateNoteCommandHandlerTests
 {
+    private const string TestUserId = "test-user-id";
     private readonly Mock<INoteRepository> _noteRepositoryMock;
+    private readonly Mock<ITenantRepository> _tenantRepositoryMock;
+    private readonly Mock<ICurrentUserService> _currentUserServiceMock;
     private readonly UpdateNoteCommandHandler _handler;
 
     public UpdateNoteCommandHandlerTests()
     {
         _noteRepositoryMock = new Mock<INoteRepository>();
+        _tenantRepositoryMock = new Mock<ITenantRepository>();
+        _currentUserServiceMock = new Mock<ICurrentUserService>();
+        _currentUserServiceMock.Setup(s => s.UserId).Returns(TestUserId);
+        _tenantRepositoryMock
+            .Setup(r => r.GetByUserIdAndFlatIdAsync(TestUserId, It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Domain.Entities.Tenant("Owner", "Test", "owner@test.com", TestUserId, Guid.NewGuid(), isOwner: true));
         _handler = new UpdateNoteCommandHandler(
             _noteRepositoryMock.Object,
+            _tenantRepositoryMock.Object,
+            _currentUserServiceMock.Object,
             Mock.Of<ILogger<UpdateNoteCommandHandler>>());
     }
 

@@ -1,4 +1,5 @@
 using FlatFlow.Application.Common.Exceptions;
+using FlatFlow.Application.Contracts.Identity;
 using FlatFlow.Application.Contracts.Persistence;
 using FlatFlow.Application.Features.Payment.Commands.MarkShareAsPartial;
 using FlatFlow.Domain.Enums;
@@ -13,14 +14,25 @@ namespace FlatFlow.Application.UnitTests.Features.Payment.Commands;
 
 public class MarkShareAsPartialCommandHandlerTests
 {
+    private const string TestUserId = "test-user-id";
     private readonly Mock<IPaymentRepository> _paymentRepositoryMock;
+    private readonly Mock<ITenantRepository> _tenantRepositoryMock;
+    private readonly Mock<ICurrentUserService> _currentUserServiceMock;
     private readonly MarkShareAsPartialCommandHandler _handler;
 
     public MarkShareAsPartialCommandHandlerTests()
     {
         _paymentRepositoryMock = new Mock<IPaymentRepository>();
+        _tenantRepositoryMock = new Mock<ITenantRepository>();
+        _currentUserServiceMock = new Mock<ICurrentUserService>();
+        _currentUserServiceMock.Setup(s => s.UserId).Returns(TestUserId);
+        _tenantRepositoryMock
+            .Setup(r => r.GetByUserIdAndFlatIdAsync(TestUserId, It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Domain.Entities.Tenant("Owner", "Test", "owner@test.com", TestUserId, Guid.NewGuid(), isOwner: true));
         _handler = new MarkShareAsPartialCommandHandler(
             _paymentRepositoryMock.Object,
+            _tenantRepositoryMock.Object,
+            _currentUserServiceMock.Object,
             Mock.Of<ILogger<MarkShareAsPartialCommandHandler>>());
     }
 
