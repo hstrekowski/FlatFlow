@@ -1,0 +1,817 @@
+{
+	"info": {
+		"name": "FlatFlow API",
+		"description": "FlatFlow API - Flat management application with authentication, CQRS, and Clean Architecture.\n\n## Auth Flow\n1. Register a new user (POST /api/auth/register)\n2. Login to get JWT token (POST /api/auth/login)\n3. Use token in Authorization header: Bearer {{token}}\n\n## Enums\n- ChoreFrequency: 0 = Once, 1 = Daily, 2 = Weekly, 3 = Monthly\n- PaymentShareStatus: 0 = New, 1 = Partial, 2 = Paid",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:7001",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "flatId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tenantId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "choreId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "assignmentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "paymentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "shareId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "noteId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('token', json.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Jan\",\n    \"lastName\": \"Kowalski\",\n    \"email\": \"jan@example.com\",\n    \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('token', json.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jan@example.com\",\n    \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "me"]
+						}
+					}
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Jan\",\n    \"lastName\": \"Nowak\",\n    \"email\": \"jan.nowak@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "me"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Flats",
+			"item": [
+				{
+					"name": "Create Flat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('flatId', json);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Mieszkanie na Mokotowie\",\n    \"street\": \"ul. Puławska 123\",\n    \"city\": \"Warszawa\",\n    \"zipCode\": \"02-515\",\n    \"country\": \"Polska\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats"]
+						}
+					}
+				},
+				{
+					"name": "Get All Flats",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats?page=1&pageSize=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats"],
+							"query": [
+								{ "key": "page", "value": "1" },
+								{ "key": "pageSize", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get My Flats",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/my",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "my"]
+						}
+					}
+				},
+				{
+					"name": "Get Flat By Id",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Flat By Access Code",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/by-access-code/ABC123",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "by-access-code", "ABC123"]
+						}
+					}
+				},
+				{
+					"name": "Update Flat",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"flatId\": \"{{flatId}}\",\n    \"name\": \"Mieszkanie na Mokotowie - Updated\",\n    \"street\": \"ul. Puławska 456\",\n    \"city\": \"Warszawa\",\n    \"zipCode\": \"02-515\",\n    \"country\": \"Polska\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}"]
+						}
+					}
+				},
+				{
+					"name": "Refresh Access Code",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/refresh-access-code",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "refresh-access-code"]
+						}
+					}
+				},
+				{
+					"name": "Join Flat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accessCode\": \"ABC123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/join",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "join"]
+						}
+					}
+				},
+				{
+					"name": "Delete Flat",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Tenants",
+			"item": [
+				{
+					"name": "Get Tenants By Flat Id",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/tenants",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "tenants"]
+						}
+					}
+				},
+				{
+					"name": "Get Tenant By Id",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/tenants/{{tenantId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "tenants", "{{tenantId}}"]
+						}
+					}
+				},
+				{
+					"name": "Promote Tenant",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/tenants/{{tenantId}}/promote",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "tenants", "{{tenantId}}", "promote"]
+						}
+					}
+				},
+				{
+					"name": "Revoke Tenant Ownership",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/tenants/{{tenantId}}/revoke-ownership",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "tenants", "{{tenantId}}", "revoke-ownership"]
+						}
+					}
+				},
+				{
+					"name": "Remove Tenant",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/tenants/{{tenantId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "tenants", "{{tenantId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Chores",
+			"item": [
+				{
+					"name": "Add Chore",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('choreId', json);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"flatId\": \"{{flatId}}\",\n    \"title\": \"Odkurzanie salonu\",\n    \"description\": \"Odkurzyć salon i korytarz\",\n    \"frequency\": 2,\n    \"createdById\": \"{{tenantId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/chores",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "chores"]
+						}
+					}
+				},
+				{
+					"name": "Get Chores By Flat Id",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/chores",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "chores"]
+						}
+					}
+				},
+				{
+					"name": "Get Chore By Id",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/chores/{{choreId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "chores", "{{choreId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Chore",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"choreId\": \"{{choreId}}\",\n    \"title\": \"Odkurzanie salonu - Updated\",\n    \"description\": \"Odkurzyć salon, korytarz i kuchnię\",\n    \"frequency\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/chores/{{choreId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "chores", "{{choreId}}"]
+						}
+					}
+				},
+				{
+					"name": "Remove Chore",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/chores/{{choreId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "chores", "{{choreId}}"]
+						}
+					}
+				},
+				{
+					"name": "Add Chore Assignment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('assignmentId', json);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"choreId\": \"{{choreId}}\",\n    \"tenantId\": \"{{tenantId}}\",\n    \"dueDate\": \"2026-04-15T00:00:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/chores/{{choreId}}/assignments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "chores", "{{choreId}}", "assignments"]
+						}
+					}
+				},
+				{
+					"name": "Complete Chore Assignment",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/chores/{{choreId}}/assignments/{{assignmentId}}/complete",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "chores", "{{choreId}}", "assignments", "{{assignmentId}}", "complete"]
+						}
+					}
+				},
+				{
+					"name": "Reopen Chore Assignment",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/chores/{{choreId}}/assignments/{{assignmentId}}/reopen",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "chores", "{{choreId}}", "assignments", "{{assignmentId}}", "reopen"]
+						}
+					}
+				},
+				{
+					"name": "Remove Chore Assignment",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/chores/{{choreId}}/assignments/{{assignmentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "chores", "{{choreId}}", "assignments", "{{assignmentId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "Add Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('paymentId', json);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"flatId\": \"{{flatId}}\",\n    \"title\": \"Czynsz za kwiecień\",\n    \"amount\": 2500.00,\n    \"dueDate\": \"2026-04-30T00:00:00\",\n    \"createdById\": \"{{tenantId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "payments"]
+						}
+					}
+				},
+				{
+					"name": "Get Payments By Flat Id",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/payments?page=1&pageSize=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "payments"],
+							"query": [
+								{ "key": "page", "value": "1" },
+								{ "key": "pageSize", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Payment By Id",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/payments/{{paymentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "payments", "{{paymentId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Payment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"paymentId\": \"{{paymentId}}\",\n    \"title\": \"Czynsz za kwiecień - Updated\",\n    \"amount\": 2600.00,\n    \"dueDate\": \"2026-04-30T00:00:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/payments/{{paymentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "payments", "{{paymentId}}"]
+						}
+					}
+				},
+				{
+					"name": "Remove Payment",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/payments/{{paymentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "payments", "{{paymentId}}"]
+						}
+					}
+				},
+				{
+					"name": "Add Payment Share",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('shareId', json);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"paymentId\": \"{{paymentId}}\",\n    \"tenantId\": \"{{tenantId}}\",\n    \"shareAmount\": 833.33\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/payments/{{paymentId}}/shares",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "payments", "{{paymentId}}", "shares"]
+						}
+					}
+				},
+				{
+					"name": "Mark Share As Paid",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/payments/{{paymentId}}/shares/{{shareId}}/mark-paid",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "payments", "{{paymentId}}", "shares", "{{shareId}}", "mark-paid"]
+						}
+					}
+				},
+				{
+					"name": "Mark Share As Partial",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/payments/{{paymentId}}/shares/{{shareId}}/mark-partial",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "payments", "{{paymentId}}", "shares", "{{shareId}}", "mark-partial"]
+						}
+					}
+				},
+				{
+					"name": "Remove Payment Share",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/payments/{{paymentId}}/shares/{{shareId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "payments", "{{paymentId}}", "shares", "{{shareId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Notes",
+			"item": [
+				{
+					"name": "Add Note",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('noteId', json);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"flatId\": \"{{flatId}}\",\n    \"title\": \"Lista zakupów\",\n    \"content\": \"Mleko, chleb, masło, jajka\",\n    \"authorId\": \"{{tenantId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/notes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "notes"]
+						}
+					}
+				},
+				{
+					"name": "Get Notes By Flat Id",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/notes?page=1&pageSize=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "notes"],
+							"query": [
+								{ "key": "page", "value": "1" },
+								{ "key": "pageSize", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Note By Id",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/notes/{{noteId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "notes", "{{noteId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Note",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"noteId\": \"{{noteId}}\",\n    \"title\": \"Lista zakupów - Updated\",\n    \"content\": \"Mleko, chleb, masło, jajka, ser\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/notes/{{noteId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "notes", "{{noteId}}"]
+						}
+					}
+				},
+				{
+					"name": "Remove Note",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/api/flats/{{flatId}}/notes/{{noteId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "flats", "{{flatId}}", "notes", "{{noteId}}"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

@@ -1,6 +1,6 @@
 using FlatFlow.Application.Contracts.Persistence;
 using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace FlatFlow.Api.Authorization;
 
@@ -26,7 +26,7 @@ public class FlatAuthorizationHandler : IAuthorizationHandler
         if (!Guid.TryParse(flatIdValue, out var flatId))
             return;
 
-        var userId = context.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+        var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? context.User.FindFirst("sub")?.Value;
         if (string.IsNullOrEmpty(userId))
             return;
