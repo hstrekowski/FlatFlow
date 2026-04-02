@@ -1,0 +1,46 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+  <h2>Zarejestruj się</h2>
+
+  <div class="field">
+    <label for="firstName">Imię</label>
+    <input id="firstName" type="text" pInputText formControlName="firstName" class="w-full" />
+  </div>
+
+  <div class="field">
+    <label for="lastName">Nazwisko</label>
+    <input id="lastName" type="text" pInputText formControlName="lastName" class="w-full" />
+  </div>
+
+  <div class="field">
+    <label for="email">Email</label>
+    <input id="email" type="email" pInputText formControlName="email" class="w-full" />
+  </div>
+
+  <div class="field">
+    <label for="password">Hasło</label>
+    <p-password
+      id="password"
+      formControlName="password"
+      [toggleMask]="true"
+      [feedback]="false"
+      styleClass="w-full"
+      inputStyleClass="w-full"
+    />
+  </div>
+
+  @if (errorMessage) {
+    <p-message severity="error" [text]="errorMessage" class="w-full" />
+  }
+
+  <p-button
+    type="submit"
+    label="Zarejestruj"
+    [loading]="loading"
+    [disabled]="form.invalid"
+    styleClass="w-full"
+  />
+
+  <p class="auth-link">
+    Masz już konto? <a routerLink="/login">Zaloguj się</a>
+  </p>
+</form>
