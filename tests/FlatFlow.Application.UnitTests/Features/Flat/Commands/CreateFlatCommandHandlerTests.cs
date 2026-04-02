@@ -1,6 +1,7 @@
+using FlatFlow.Application.Common.Models.Identity;
+using FlatFlow.Application.Contracts.Identity;
 using FlatFlow.Application.Contracts.Persistence;
 using FlatFlow.Application.Features.Flat.Commands.CreateFlat;
-using FlatFlow.Domain.Entities;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -9,13 +10,21 @@ namespace FlatFlow.Application.UnitTests.Features.Flat.Commands;
 
 public class CreateFlatCommandHandlerTests
 {
+    private const string TestUserId = "test-user-id";
     private readonly Mock<IFlatRepository> _flatRepositoryMock;
+    private readonly Mock<ICurrentUserService> _currentUserServiceMock;
+    private readonly Mock<IAuthService> _authServiceMock;
     private readonly CreateFlatCommandHandler _handler;
     private Domain.Entities.Flat? _capturedFlat;
 
     public CreateFlatCommandHandlerTests()
     {
         _flatRepositoryMock = new Mock<IFlatRepository>();
+        _currentUserServiceMock = new Mock<ICurrentUserService>();
+        _authServiceMock = new Mock<IAuthService>();
+        _currentUserServiceMock.Setup(s => s.UserId).Returns(TestUserId);
+        _authServiceMock.Setup(s => s.GetUserAsync(TestUserId))
+            .ReturnsAsync(new UserProfile { UserId = TestUserId, FirstName = "Jan", LastName = "Kowalski", Email = "jan@test.com" });
         _flatRepositoryMock
             .Setup(r => r.AddAsync(It.IsAny<Domain.Entities.Flat>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Domain.Entities.Flat f, CancellationToken _) =>
@@ -26,6 +35,8 @@ public class CreateFlatCommandHandlerTests
 
         _handler = new CreateFlatCommandHandler(
             _flatRepositoryMock.Object,
+            _currentUserServiceMock.Object,
+            _authServiceMock.Object,
             Mock.Of<ILogger<CreateFlatCommandHandler>>());
     }
 
@@ -63,5 +74,24 @@ public class CreateFlatCommandHandlerTests
                 f.AccessCode != string.Empty),
             It.IsAny<CancellationToken>()),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ValidCommand_ShouldAutoCreateOwnerTenant()
+    {
+        // Arrange
+        var command = new CreateFlatCommand("Mieszkanie", "Długa 5", "Kraków", "30-001", "Poland");
+
+        // Act
+        await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        _capturedFlat.Should().NotBeNull();
+        var tenant = _capturedFlat!.Tenants.Should().ContainSingle().Subject;
+        tenant.FirstName.Should().Be("Jan");
+        tenant.LastName.Should().Be("Kowalski");
+        tenant.Email.Should().Be("jan@test.com");
+        tenant.UserId.Should().Be(TestUserId);
+        tenant.IsOwner.Should().BeTrue();
     }
 }
