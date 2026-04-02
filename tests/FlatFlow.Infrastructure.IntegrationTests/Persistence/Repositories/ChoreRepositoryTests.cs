@@ -35,9 +35,11 @@ public class ChoreRepositoryTests : IDisposable
         // Arrange
         var flat1 = new Flat("Flat 1", new Address("Street", "City", "00-000", "Country"));
         var flat2 = new Flat("Flat 2", new Address("Street", "City", "00-000", "Country"));
-        flat1.AddChore("Clean kitchen", "Wipe counters", ChoreFrequency.Weekly);
-        flat1.AddChore("Vacuum", "All rooms", ChoreFrequency.Daily);
-        flat2.AddChore("Mow lawn", "", ChoreFrequency.Monthly);
+        var tenant1 = flat1.AddTenant("John", "Doe", "john@test.com", "user-1");
+        flat1.AddChore("Clean kitchen", "Wipe counters", ChoreFrequency.Weekly, tenant1.Id);
+        flat1.AddChore("Vacuum", "All rooms", ChoreFrequency.Daily, tenant1.Id);
+        var tenant2 = flat2.AddTenant("Jane", "Doe", "jane@test.com", "user-2");
+        flat2.AddChore("Mow lawn", "", ChoreFrequency.Monthly, tenant2.Id);
         _context.Flats.AddRange(flat1, flat2);
         await _context.SaveChangesAsync();
 
@@ -70,7 +72,7 @@ public class ChoreRepositoryTests : IDisposable
         // Arrange
         var flat = new Flat("Flat", new Address("Street", "City", "00-000", "Country"));
         var tenant = flat.AddTenant("John", "Doe", "john@test.com", "user-1");
-        var chore = flat.AddChore("Clean", "Description", ChoreFrequency.Weekly);
+        var chore = flat.AddChore("Clean", "Description", ChoreFrequency.Weekly, tenant.Id);
         chore.AddAssignment(tenant.Id, DateTime.UtcNow.AddDays(1));
         _context.Flats.Add(flat);
         await _context.SaveChangesAsync();

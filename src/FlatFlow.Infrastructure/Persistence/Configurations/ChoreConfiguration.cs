@@ -27,6 +27,11 @@ namespace FlatFlow.Infrastructure.Persistence.Configurations
                 .HasForeignKey(c => c.FlatId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasOne(c => c.CreatedBy)
+                .WithMany()
+                .HasForeignKey(c => c.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasMany(c => c.ChoreAssignments)
                 .WithOne(ca => ca.Chore)
                 .HasForeignKey(ca => ca.ChoreId)

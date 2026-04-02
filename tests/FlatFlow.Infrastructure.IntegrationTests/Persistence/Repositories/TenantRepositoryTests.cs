@@ -91,4 +91,56 @@ public class TenantRepositoryTests : IDisposable
         // Assert
         result.Should().BeEmpty();
     }
+
+    [Fact]
+    public async Task GetByUserIdAndFlatIdAsync_ShouldReturnTenant()
+    {
+        // Arrange
+        var flat = new Flat("Flat 1", new Address("Street", "City", "00-000", "Country"));
+        var tenant = flat.AddTenant("John", "Doe", "john@test.com", "user-1");
+        _context.Flats.Add(flat);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _repository.GetByUserIdAndFlatIdAsync("user-1", flat.Id);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(tenant.Id);
+        result.UserId.Should().Be("user-1");
+        result.FlatId.Should().Be(flat.Id);
+    }
+
+    [Fact]
+    public async Task GetByUserIdAndFlatIdAsync_WhenUserNotInFlat_ShouldReturnNull()
+    {
+        // Arrange
+        var flat = new Flat("Flat 1", new Address("Street", "City", "00-000", "Country"));
+        flat.AddTenant("John", "Doe", "john@test.com", "user-1");
+        _context.Flats.Add(flat);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _repository.GetByUserIdAndFlatIdAsync("user-2", flat.Id);
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetByUserIdAndFlatIdAsync_WhenUserInDifferentFlat_ShouldReturnNull()
+    {
+        // Arrange
+        var flat1 = new Flat("Flat 1", new Address("Street", "City", "00-000", "Country"));
+        var flat2 = new Flat("Flat 2", new Address("Street", "City", "00-000", "Country"));
+        flat1.AddTenant("John", "Doe", "john@test.com", "user-1");
+        _context.Flats.AddRange(flat1, flat2);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _repository.GetByUserIdAndFlatIdAsync("user-1", flat2.Id);
+
+        // Assert
+        result.Should().BeNull();
+    }
 }

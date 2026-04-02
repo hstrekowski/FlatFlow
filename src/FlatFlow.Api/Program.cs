@@ -1,6 +1,8 @@
 using FlatFlow.Api.Authorization;
 using FlatFlow.Api.Middleware;
+using FlatFlow.Api.Services;
 using FlatFlow.Application;
+using FlatFlow.Application.Contracts.Identity;
 using FlatFlow.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 
@@ -15,6 +17,7 @@ namespace FlatFlow.Api
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
             builder.Services.AddScoped<IAuthorizationHandler, FlatAuthorizationHandler>();
             builder.Services.AddAuthorizationBuilder()
                 .AddPolicy("FlatMember", policy => policy.AddRequirements(new FlatMemberRequirement()))

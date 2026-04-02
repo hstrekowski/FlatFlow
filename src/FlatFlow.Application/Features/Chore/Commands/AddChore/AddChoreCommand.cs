@@ -7,4 +7,5 @@ public record AddChoreCommand(
     Guid FlatId,
     string Title,
     string Description,
-    ChoreFrequency Frequency) : IRequest<Guid>;
+    ChoreFrequency Frequency,
+    Guid CreatedById) : IRequest<Guid>;

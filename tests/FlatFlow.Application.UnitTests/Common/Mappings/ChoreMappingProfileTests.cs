@@ -32,7 +32,7 @@ public class ChoreMappingProfileTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore = flat.AddChore("Sprzątanie", "Posprzątać kuchnię", ChoreFrequency.Weekly);
+        var chore = flat.AddChore("Sprzątanie", "Posprzątać kuchnię", ChoreFrequency.Weekly, Guid.NewGuid());
 
         // Act
         var result = _mapper.Map<ChoreDto>(chore);
@@ -49,7 +49,7 @@ public class ChoreMappingProfileTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
         var tenantId = Guid.NewGuid();
         var dueDate = DateTime.UtcNow.AddDays(7);
         var assignment = chore.AddAssignment(tenantId, dueDate);
@@ -73,7 +73,7 @@ public class ChoreMappingProfileTests
     {
         // Arrange
         var flat = new Domain.Entities.Flat("Mieszkanie", new Address("Długa 5", "Kraków", "30-001", "Poland"));
-        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Once);
+        var chore = flat.AddChore("Sprzątanie", "Opis", ChoreFrequency.Once, Guid.NewGuid());
 
         // Act
         var result = _mapper.Map<ChoreDetailDto>(chore);

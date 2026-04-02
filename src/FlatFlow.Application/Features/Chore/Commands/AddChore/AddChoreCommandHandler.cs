@@ -21,7 +21,7 @@ public class AddChoreCommandHandler : IRequestHandler<AddChoreCommand, Guid>
         var flat = await _flatRepository.GetByIdWithChoresAsync(request.FlatId, cancellationToken)
             ?? throw new NotFoundException(nameof(Domain.Entities.Flat), request.FlatId);
 
-        var chore = flat.AddChore(request.Title, request.Description, request.Frequency);
+        var chore = flat.AddChore(request.Title, request.Description, request.Frequency, request.CreatedById);
 
         await _flatRepository.UpdateAsync(flat, cancellationToken);
 

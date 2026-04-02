@@ -13,22 +13,28 @@ namespace FlatFlow.Domain.Entities
         public Guid FlatId { get; private set; }
         public Flat Flat { get; private set; } = null!;
 
+        public Guid CreatedById { get; private set; }
+        public Tenant CreatedBy { get; private set; } = null!;
+
         private readonly List<ChoreAssignment> _choreAssignments = [];
         public IReadOnlyList<ChoreAssignment> ChoreAssignments => _choreAssignments.AsReadOnly();
 
         protected Chore() : base() { }
 
-        public Chore(string title, string description, ChoreFrequency frequency, Guid flatId) : base()
+        public Chore(string title, string description, ChoreFrequency frequency, Guid flatId, Guid createdById) : base()
         {
             if (string.IsNullOrWhiteSpace(title))
                 throw new DomainValidationException("Chore title cannot be empty.", nameof(title));
             if (flatId == Guid.Empty)
                 throw new DomainValidationException("Flat ID cannot be empty.", nameof(flatId));
+            if (createdById == Guid.Empty)
+                throw new DomainValidationException("Created by ID cannot be empty.", nameof(createdById));
 
             Title = title;
             Description = description;
             Frequency = frequency;
             FlatId = flatId;
+            CreatedById = createdById;
         }
 
         public void UpdateTitle(string title)

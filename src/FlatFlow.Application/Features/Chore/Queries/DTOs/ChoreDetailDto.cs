@@ -7,4 +7,5 @@ public record ChoreDetailDto(
     string Title,
     string Description,
     ChoreFrequency Frequency,
+    Guid CreatedById,
     List<ChoreAssignmentDto> Assignments);

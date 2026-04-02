@@ -12,7 +12,7 @@ public class AddChoreCommandValidatorTests
     public async Task Validate_ValidCommand_ShouldHaveNoErrors()
     {
         // Arrange
-        var command = new AddChoreCommand(Guid.NewGuid(), "Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        var command = new AddChoreCommand(Guid.NewGuid(), "Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
 
         // Act
         var result = await _validator.ValidateAsync(command);
@@ -25,7 +25,7 @@ public class AddChoreCommandValidatorTests
     public async Task Validate_EmptyFlatId_ShouldHaveError()
     {
         // Arrange
-        var command = new AddChoreCommand(Guid.Empty, "Sprzątanie", "Opis", ChoreFrequency.Weekly);
+        var command = new AddChoreCommand(Guid.Empty, "Sprzątanie", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
 
         // Act
         var result = await _validator.ValidateAsync(command);
@@ -39,7 +39,7 @@ public class AddChoreCommandValidatorTests
     public async Task Validate_EmptyTitle_ShouldHaveError()
     {
         // Arrange
-        var command = new AddChoreCommand(Guid.NewGuid(), "", "Opis", ChoreFrequency.Weekly);
+        var command = new AddChoreCommand(Guid.NewGuid(), "", "Opis", ChoreFrequency.Weekly, Guid.NewGuid());
 
         // Act
         var result = await _validator.ValidateAsync(command);
@@ -53,7 +53,7 @@ public class AddChoreCommandValidatorTests
     public async Task Validate_InvalidFrequency_ShouldHaveError()
     {
         // Arrange
-        var command = new AddChoreCommand(Guid.NewGuid(), "Sprzątanie", "Opis", (ChoreFrequency)999);
+        var command = new AddChoreCommand(Guid.NewGuid(), "Sprzątanie", "Opis", (ChoreFrequency)999, Guid.NewGuid());
 
         // Act
         var result = await _validator.ValidateAsync(command);
