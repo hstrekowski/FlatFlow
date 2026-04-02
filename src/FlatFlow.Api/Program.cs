@@ -22,6 +22,13 @@ namespace FlatFlow.Api
             builder.Services.AddAuthorizationBuilder()
                 .AddPolicy("FlatMember", policy => policy.AddRequirements(new FlatMemberRequirement()))
                 .AddPolicy("FlatOwner", policy => policy.AddRequirements(new FlatOwnerRequirement()));
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngular", policy =>
+                    policy.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+            });
             builder.Services.AddControllers();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddOpenApi();
@@ -37,6 +44,7 @@ namespace FlatFlow.Api
             }
 
             app.UseExceptionHandler(_ => { });
+            app.UseCors("AllowAngular");
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
