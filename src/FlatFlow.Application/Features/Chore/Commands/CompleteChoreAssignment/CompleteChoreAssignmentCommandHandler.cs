@@ -1,4 +1,5 @@
 using FlatFlow.Application.Common.Exceptions;
+using FlatFlow.Application.Contracts.Identity;
 using FlatFlow.Application.Contracts.Persistence;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -8,11 +9,19 @@ namespace FlatFlow.Application.Features.Chore.Commands.CompleteChoreAssignment;
 public class CompleteChoreAssignmentCommandHandler : IRequestHandler<CompleteChoreAssignmentCommand, Unit>
 {
     private readonly IChoreRepository _choreRepository;
+    private readonly ITenantRepository _tenantRepository;
+    private readonly ICurrentUserService _currentUserService;
     private readonly ILogger<CompleteChoreAssignmentCommandHandler> _logger;
 
-    public CompleteChoreAssignmentCommandHandler(IChoreRepository choreRepository, ILogger<CompleteChoreAssignmentCommandHandler> logger)
+    public CompleteChoreAssignmentCommandHandler(
+        IChoreRepository choreRepository,
+        ITenantRepository tenantRepository,
+        ICurrentUserService currentUserService,
+        ILogger<CompleteChoreAssignmentCommandHandler> logger)
     {
         _choreRepository = choreRepository;
+        _tenantRepository = tenantRepository;
+        _currentUserService = currentUserService;
         _logger = logger;
     }
 
@@ -23,6 +32,13 @@ public class CompleteChoreAssignmentCommandHandler : IRequestHandler<CompleteCho
 
         var assignment = chore.ChoreAssignments.FirstOrDefault(a => a.Id == request.AssignmentId)
             ?? throw new NotFoundException(nameof(Domain.Entities.ChoreAssignment), request.AssignmentId);
+
+        var currentTenant = await _tenantRepository.GetByUserIdAndFlatIdAsync(
+            _currentUserService.UserId, chore.FlatId, cancellationToken)
+            ?? throw new ForbiddenException("You are not a tenant in this flat.");
+
+        if (!currentTenant.IsOwner && assignment.TenantId != currentTenant.Id)
+            throw new ForbiddenException("You can only complete your own assignments.");
 
         assignment.Complete();
 
