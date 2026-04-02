@@ -11,7 +11,7 @@ public class JoinFlatCommandValidatorTests
     public async Task Validate_ValidCommand_ShouldHaveNoErrors()
     {
         // Arrange
-        var command = new JoinFlatCommand("ABC123", "Jan", "Kowalski", "jan@test.com", "user-1");
+        var command = new JoinFlatCommand("ABC123");
 
         // Act
         var result = await _validator.ValidateAsync(command);
@@ -20,37 +20,17 @@ public class JoinFlatCommandValidatorTests
         result.IsValid.Should().BeTrue();
     }
 
-    [Theory]
-    [InlineData("", "Jan", "Kowalski", "jan@test.com", "user-1", "AccessCode")]
-    [InlineData("ABC123", "", "Kowalski", "jan@test.com", "user-1", "FirstName")]
-    [InlineData("ABC123", "Jan", "", "jan@test.com", "user-1", "LastName")]
-    [InlineData("ABC123", "Jan", "Kowalski", "", "user-1", "Email")]
-    [InlineData("ABC123", "Jan", "Kowalski", "jan@test.com", "", "UserId")]
-    public async Task Validate_EmptyField_ShouldHaveError(
-        string accessCode, string firstName, string lastName, string email, string userId, string expectedProperty)
-    {
-        // Arrange
-        var command = new JoinFlatCommand(accessCode, firstName, lastName, email, userId);
-
-        // Act
-        var result = await _validator.ValidateAsync(command);
-
-        // Assert
-        result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(e => e.PropertyName == expectedProperty);
-    }
-
     [Fact]
-    public async Task Validate_InvalidEmail_ShouldHaveError()
+    public async Task Validate_EmptyAccessCode_ShouldHaveError()
     {
         // Arrange
-        var command = new JoinFlatCommand("ABC123", "Jan", "Kowalski", "not-an-email", "user-1");
+        var command = new JoinFlatCommand("");
 
         // Act
         var result = await _validator.ValidateAsync(command);
 
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().ContainSingle(e => e.PropertyName == "Email");
+        result.Errors.Should().Contain(e => e.PropertyName == "AccessCode");
     }
 }

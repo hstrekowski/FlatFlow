@@ -7,7 +7,7 @@ using FlatFlow.Application.Features.Flat.Queries.DTOs;
 using FlatFlow.Application.Features.Flat.Queries.GetAllFlats;
 using FlatFlow.Application.Features.Flat.Queries.GetFlatByAccessCode;
 using FlatFlow.Application.Features.Flat.Queries.GetFlatById;
-using FlatFlow.Application.Features.Flat.Queries.GetFlatsByUserId;
+using FlatFlow.Application.Features.Flat.Queries.GetMyFlats;
 using FlatFlow.Application.Features.Tenant.Commands.JoinFlat;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -67,12 +67,12 @@ public class FlatsController : ControllerBase
         return Ok(result);
     }
 
-    // GET api/flats/by-user/{userId}
-    [HttpGet("by-user/{userId}")]
+    // GET api/flats/my
+    [HttpGet("my")]
     [ProducesResponseType(typeof(List<FlatDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<FlatDto>>> GetByUserId([FromRoute] string userId)
+    public async Task<ActionResult<List<FlatDto>>> GetMyFlats()
     {
-        var result = await _mediator.Send(new GetFlatsByUserIdQuery(userId));
+        var result = await _mediator.Send(new GetMyFlatsQuery());
         return Ok(result);
     }
 
