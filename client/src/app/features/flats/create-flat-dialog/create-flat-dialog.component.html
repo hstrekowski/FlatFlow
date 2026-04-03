@@ -1,32 +1,32 @@
 <p-dialog
-  header="Utwórz mieszkanie"
+  header="Create Flat"
   [modal]="true"
   [(visible)]="visible"
   [style]="{ width: '450px' }"
 >
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
     <div class="field">
-      <label for="name">Nazwa</label>
+      <label for="name">Name</label>
       <input id="name" type="text" pInputText formControlName="name" class="w-full" />
     </div>
 
     <div class="field">
-      <label for="street">Ulica</label>
+      <label for="street">Street</label>
       <input id="street" type="text" pInputText formControlName="street" class="w-full" />
     </div>
 
     <div class="field">
-      <label for="city">Miasto</label>
+      <label for="city">City</label>
       <input id="city" type="text" pInputText formControlName="city" class="w-full" />
     </div>
 
     <div class="field">
-      <label for="zipCode">Kod pocztowy</label>
+      <label for="zipCode">Zip Code</label>
       <input id="zipCode" type="text" pInputText formControlName="zipCode" class="w-full" />
     </div>
 
     <div class="field">
-      <label for="country">Kraj</label>
+      <label for="country">Country</label>
       <input id="country" type="text" pInputText formControlName="country" class="w-full" />
     </div>
 
@@ -36,7 +36,7 @@
 
     <p-button
       type="submit"
-      label="Utwórz"
+      label="Create"
       [loading]="loading()"
       [disabled]="form.invalid"
       styleClass="w-full"

@@ -1,12 +1,12 @@
 <div class="flats-page">
   <section class="flats-section">
     <div class="section-header">
-      <h2>Twoje mieszkania</h2>
-      <p-button label="Utwórz mieszkanie" icon="pi pi-plus" (onClick)="openCreateDialog()" />
+      <h2>Your Flats</h2>
+      <p-button label="Create Flat" icon="pi pi-plus" (onClick)="openCreateDialog()" />
     </div>
 
     @if (myFlats().length === 0 && !loading()) {
-      <p class="empty-state">Nie należysz jeszcze do żadnego mieszkania.</p>
+      <p class="empty-state">You don't belong to any flat yet.</p>
     }
 
     <div class="flats-grid">
@@ -23,9 +23,9 @@
 
   <section class="flats-section">
     <div class="section-header">
-      <h2>Wszystkie mieszkania</h2>
+      <h2>All Flats</h2>
       <p-button
-        label="Dołącz po kodzie"
+        label="Join by Code"
         icon="pi pi-sign-in"
         severity="secondary"
         (onClick)="openGenericJoinDialog()"
@@ -42,7 +42,7 @@
     }
 
     @if (allFlats().length === 0 && !loading()) {
-      <p class="empty-state">Brak dostępnych mieszkań.</p>
+      <p class="empty-state">No flats available.</p>
     }
 
     <div class="flats-grid">
@@ -56,7 +56,7 @@
             <h3>{{ flat.name }}</h3>
             <p><i class="pi pi-map-marker"></i> {{ flat.city }}</p>
             @if (isMyFlat(flat)) {
-              <span class="badge">Twoje</span>
+              <span class="badge">Yours</span>
             }
           </div>
         </p-card>

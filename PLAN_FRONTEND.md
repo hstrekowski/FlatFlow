@@ -6,7 +6,7 @@
 - CSS (bez SCSS)
 - Lazy loading per feature
 - BehaviorSubject w serwisach (state management)
-- Język UI: polski
+- Język UI: English
 - Responsywność: mobile-first
 
 ## Fazy

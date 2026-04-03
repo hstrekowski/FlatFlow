@@ -1,13 +1,13 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
-  <h2>Zarejestruj się</h2>
+  <h2>Sign Up</h2>
 
   <div class="field">
-    <label for="firstName">Imię</label>
+    <label for="firstName">First Name</label>
     <input id="firstName" type="text" pInputText formControlName="firstName" class="w-full" />
   </div>
 
   <div class="field">
-    <label for="lastName">Nazwisko</label>
+    <label for="lastName">Last Name</label>
     <input id="lastName" type="text" pInputText formControlName="lastName" class="w-full" />
   </div>
 
@@ -17,7 +17,7 @@
   </div>
 
   <div class="field">
-    <label for="password">Hasło</label>
+    <label for="password">Password</label>
     <p-password
       id="password"
       formControlName="password"
@@ -34,13 +34,13 @@
 
   <p-button
     type="submit"
-    label="Zarejestruj"
+    label="Sign Up"
     [loading]="loading()"
     [disabled]="form.invalid"
     styleClass="w-full"
   />
 
   <p class="auth-link">
-    Masz już konto? <a routerLink="/login">Zaloguj się</a>
+    Already have an account? <a routerLink="/login">Sign In</a>
   </p>
 </form>

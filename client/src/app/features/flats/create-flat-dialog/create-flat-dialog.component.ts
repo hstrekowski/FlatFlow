@@ -55,7 +55,7 @@ export class CreateFlatDialogComponent {
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(err.error?.message || 'Nie udało się utworzyć mieszkania.');
+        this.errorMessage.set(err.error?.message || 'Failed to create flat.');
       },
     });
   }
