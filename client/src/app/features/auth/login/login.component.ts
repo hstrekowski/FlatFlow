@@ -51,7 +51,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(err.error?.message || 'Błąd logowania. Spróbuj ponownie.');
+        this.errorMessage.set(err.error?.message || 'Login failed. Please try again.');
       },
     });
   }

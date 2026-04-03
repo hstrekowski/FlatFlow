@@ -55,7 +55,7 @@ export class JoinFlatDialogComponent {
       this.flatService.getByAccessCode(accessCode).pipe(
         switchMap((flat) => {
           if (flat.id !== this.flatId) {
-            throw new Error('Kod dostępu nie pasuje do tego mieszkania.');
+            throw new Error('Access code does not match this flat.');
           }
           return this.flatService.joinFlat({ accessCode });
         }),
@@ -82,7 +82,7 @@ export class JoinFlatDialogComponent {
     if (err instanceof Error) {
       this.errorMessage.set(err.message);
     } else {
-      this.errorMessage.set((err as any).error?.message || 'Nie udało się dołączyć do mieszkania.');
+      this.errorMessage.set((err as any).error?.message || 'Failed to join flat.');
     }
   }
 }

@@ -53,7 +53,7 @@ export class RegisterComponent {
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(err.error?.message || 'Błąd rejestracji. Spróbuj ponownie.');
+        this.errorMessage.set(err.error?.message || 'Registration failed. Please try again.');
       },
     });
   }
