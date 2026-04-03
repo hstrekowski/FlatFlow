@@ -29,6 +29,13 @@ export const FLAT_DETAIL_ROUTES: Routes = [
             (m) => m.PaymentsListComponent,
           ),
       },
+      {
+        path: 'notes',
+        loadComponent: () =>
+          import('./notes/notes-list/notes-list.component').then(
+            (m) => m.NotesListComponent,
+          ),
+      },
     ],
   },
 ];
