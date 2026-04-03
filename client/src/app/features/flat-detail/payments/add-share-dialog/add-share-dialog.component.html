@@ -1,0 +1,45 @@
+<p-dialog
+  header="Add Share"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '450px' }"
+>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <div class="field">
+      <label for="tenantId">Tenant</label>
+      <p-select
+        id="tenantId"
+        formControlName="tenantId"
+        [options]="tenants()"
+        optionLabel="firstName"
+        optionValue="id"
+        placeholder="Select tenant"
+        styleClass="w-full"
+      />
+    </div>
+
+    <div class="field">
+      <label for="shareAmount">Amount</label>
+      <p-inputnumber
+        id="shareAmount"
+        formControlName="shareAmount"
+        mode="currency"
+        currency="PLN"
+        [minFractionDigits]="2"
+        styleClass="w-full"
+      />
+    </div>
+
+    @if (errorMessage()) {
+      <p-message severity="error" [text]="errorMessage()" class="w-full" />
+    }
+
+    <p-button
+      type="submit"
+      label="Add"
+      [loading]="loading()"
+      [disabled]="form.invalid"
+      styleClass="w-full"
+    />
+  </form>
+</p-dialog>

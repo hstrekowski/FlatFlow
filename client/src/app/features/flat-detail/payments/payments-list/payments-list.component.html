@@ -1,0 +1,159 @@
+<p-toast />
+<div class="payments-page">
+  <div class="payments-header">
+    <h2>Payments</h2>
+    <p-button label="Add Payment" icon="pi pi-plus" (onClick)="openAddPayment()" />
+  </div>
+
+  @if (loading()) {
+    <p class="loading-text">Loading...</p>
+  }
+
+  @if (!loading() && payments().length === 0) {
+    <p class="empty-text">No payments yet. Add one to get started.</p>
+  }
+
+  @if (!loading() && payments().length > 0) {
+    @for (payment of payments(); track payment.id) {
+      <div class="payment-card">
+        <div class="payment-card-header">
+          <div class="payment-info">
+            <h3 class="payment-title">{{ payment.title }}</h3>
+            <div class="payment-meta">
+              <span class="payment-amount">{{ payment.amount | currency: 'PLN' }}</span>
+              <span class="meta-separator">|</span>
+              <span class="meta-text">Due: {{ payment.dueDate | date: 'yyyy-MM-dd' }}</span>
+              <span class="meta-separator">|</span>
+              <span class="meta-text">by {{ getTenantName(payment.createdById) }}</span>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <p-button
+              icon="pi pi-pencil"
+              [text]="true"
+              [rounded]="true"
+              severity="info"
+              (onClick)="openEditPayment(payment)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [text]="true"
+              [rounded]="true"
+              severity="danger"
+              (onClick)="confirmDeletePayment(payment)"
+            />
+          </div>
+        </div>
+
+        <div class="shares-section">
+          <div class="shares-header">
+            <h4>Shares</h4>
+            <p-button
+              label="Add Share"
+              icon="pi pi-plus"
+              size="small"
+              [outlined]="true"
+              (onClick)="openAddShare(payment.id)"
+            />
+          </div>
+
+          @if (payment.shares && payment.shares.length > 0) {
+            <table class="shares-table">
+              <thead>
+                <tr>
+                  <th>Tenant</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (share of payment.shares; track share.id) {
+                  <tr>
+                    <td>{{ getTenantName(share.tenantId) }}</td>
+                    <td>{{ share.shareAmount | currency: 'PLN' }}</td>
+                    <td>
+                      <p-tag
+                        [value]="getShareStatusLabel(share.status)"
+                        [severity]="getShareStatusSeverity(share.status)"
+                      />
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        @if (share.status !== 2) {
+                          <p-button
+                            icon="pi pi-check"
+                            [text]="true"
+                            [rounded]="true"
+                            severity="success"
+                            pTooltip="Mark as paid"
+                            (onClick)="markAsPaid(payment.id, share.id)"
+                          />
+                        }
+                        @if (share.status !== 1) {
+                          <p-button
+                            icon="pi pi-minus"
+                            [text]="true"
+                            [rounded]="true"
+                            severity="warn"
+                            pTooltip="Mark as partial"
+                            (onClick)="markAsPartial(payment.id, share.id)"
+                          />
+                        }
+                        <p-button
+                          icon="pi pi-trash"
+                          [text]="true"
+                          [rounded]="true"
+                          severity="danger"
+                          pTooltip="Remove"
+                          (onClick)="confirmDeleteShare(payment.id, share)"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <p class="empty-text">No shares yet.</p>
+          }
+        </div>
+      </div>
+    }
+
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <p-button
+          icon="pi pi-chevron-left"
+          [text]="true"
+          [disabled]="page === 1"
+          (onClick)="prevPage()"
+        />
+        <span class="page-info">Page {{ page }} of {{ totalPages }}</span>
+        <p-button
+          icon="pi pi-chevron-right"
+          [text]="true"
+          [disabled]="page === totalPages"
+          (onClick)="nextPage()"
+        />
+      </div>
+    }
+  }
+
+  <p-confirmDialog />
+
+  <app-add-payment-dialog
+    [flatId]="flatId"
+    [createdById]="currentTenantId"
+    (created)="loadPayments()"
+  />
+  <app-edit-payment-dialog
+    [flatId]="flatId"
+    (updated)="loadPayments()"
+  />
+  <app-add-share-dialog
+    [flatId]="flatId"
+    [tenants]="tenants()"
+    (created)="loadPayments()"
+  />
+</div>
