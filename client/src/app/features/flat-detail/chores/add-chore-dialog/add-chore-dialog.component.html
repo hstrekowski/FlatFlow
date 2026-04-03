@@ -1,0 +1,42 @@
+<p-dialog
+  header="Add Chore"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '450px' }"
+>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <div class="field">
+      <label for="title">Title</label>
+      <input id="title" type="text" pInputText formControlName="title" class="w-full" />
+    </div>
+
+    <div class="field">
+      <label for="description">Description</label>
+      <input id="description" type="text" pInputText formControlName="description" class="w-full" />
+    </div>
+
+    <div class="field">
+      <label for="frequency">Frequency</label>
+      <p-select
+        id="frequency"
+        formControlName="frequency"
+        [options]="frequencyOptions"
+        optionLabel="label"
+        optionValue="value"
+        styleClass="w-full"
+      />
+    </div>
+
+    @if (errorMessage()) {
+      <p-message severity="error" [text]="errorMessage()" class="w-full" />
+    }
+
+    <p-button
+      type="submit"
+      label="Add"
+      [loading]="loading()"
+      [disabled]="form.invalid"
+      styleClass="w-full"
+    />
+  </form>
+</p-dialog>
