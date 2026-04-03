@@ -1,6 +1,6 @@
 # Flat Flow
 
-A full-stack web application for managing shared apartments — chores, payments, notes, and tenants. Built with **Clean Architecture** and **CQRS** pattern.
+## A full-stack web application for managing shared apartments — chores, payments, notes, and tenants. Built with **Clean Architecture** and **CQRS** pattern.
 
 ## Screenshots
 
@@ -9,23 +9,20 @@ A full-stack web application for managing shared apartments — chores, payments
 ## Tech Stack
 
 ### Backend
-- .NET 9 / ASP.NET Core
+
+- .NET 10 / ASP.NET Core
 - Entity Framework Core + MSSQL
-- MediatR (CQRS)
-- FluentValidation
-- AutoMapper
 - ASP.NET Identity + JWT Authentication
-- Serilog
+- MediatR (CQRS) & Clean Architecture
 
 ### Frontend
-- Angular 21 (standalone components, signals)
-- PrimeNG v19 (Aura dark theme)
-- Reactive Forms
-- Lazy-loaded feature modules
+
+- Angular 21, PrimeNG
 
 ### Testing
+
 - xUnit + FluentAssertions + Moq
-- 471 tests (unit + integration)
+- 559 tests (unit + integration)
 
 ## Architecture
 
@@ -45,13 +42,6 @@ client/
 ├── Angular frontend
 ```
 
-### Design Patterns
-- **CQRS** — Commands (state changes) and Queries (data retrieval) separated via MediatR
-- **Repository Pattern** — Abstracted data access with generic and specific repositories
-- **Aggregate Root** — Flat manages Tenants/Chores/Notes/Payments; Payment manages Shares; Chore manages Assignments
-- **Pipeline Behaviors** — Validation, Logging, and Exception handling in MediatR pipeline
-- **JWT Authentication** — Flat-scoped authorization (Owner/Member policies)
-
 ## Features
 
 - **Auth** — Register, login, JWT-based session, profile management
@@ -65,7 +55,8 @@ client/
 ## Getting Started
 
 ### Prerequisites
-- .NET 9 SDK
+
+- .NET 10 SDK
 - Node.js 20+
 - SQL Server (LocalDB or full instance)
 
@@ -112,14 +103,3 @@ dotnet test tests/FlatFlow.Domain.UnitTests
 dotnet test tests/FlatFlow.Application.UnitTests
 dotnet test tests/FlatFlow.Infrastructure.IntegrationTests
 ```
-
-## API Endpoints
-
-| Resource | Endpoints |
-|----------|-----------|
-| Auth | `POST /api/auth/register`, `POST /api/auth/login`, `GET/PUT /api/auth/me` |
-| Flats | `GET /api/flats`, `GET /api/flats/my`, `POST /api/flats`, `GET/PUT/DELETE /api/flats/:id`, `POST /api/flats/join` |
-| Chores | `GET/POST /api/flats/:id/chores`, `GET/PUT/DELETE .../chores/:id`, assignments CRUD |
-| Payments | `GET/POST /api/flats/:id/payments`, `GET/PUT/DELETE .../payments/:id`, shares CRUD |
-| Notes | `GET/POST /api/flats/:id/notes`, `GET/PUT/DELETE .../notes/:id` |
-| Tenants | `GET /api/flats/:id/tenants`, promote, revoke, remove |
