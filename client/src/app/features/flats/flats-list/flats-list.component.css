@@ -1,0 +1,67 @@
+.flats-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.flats-section h2 {
+  margin: 0;
+  color: #d4d4d4;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.flats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+:host ::ng-deep .flat-card {
+  cursor: pointer;
+  transition: border-color 0.2s;
+  border: 1px solid transparent;
+}
+
+:host ::ng-deep .flat-card:hover {
+  border-color: #9e9e9e;
+}
+
+.flat-card-content h3 {
+  margin: 0 0 0.5rem 0;
+  color: #d4d4d4;
+}
+
+.flat-card-content p {
+  margin: 0;
+  color: #9e9e9e;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  background-color: #2a2a2a;
+  color: #b0b0b0;
+  border: 1px solid #9e9e9e;
+}
+
+:host ::ng-deep p-paginator {
+  margin-bottom: 1rem;
+}
+
+.empty-state {
+  color: #9e9e9e;
+  font-style: italic;
+}

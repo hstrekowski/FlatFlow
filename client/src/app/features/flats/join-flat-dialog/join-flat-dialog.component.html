@@ -1,0 +1,25 @@
+<p-dialog
+  [header]="flatName() ? 'Dołącz do: ' + flatName() : 'Dołącz do mieszkania'"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '400px' }"
+>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <div class="field">
+      <label for="accessCode">Kod dostępu</label>
+      <input id="accessCode" type="text" pInputText formControlName="accessCode" class="w-full" />
+    </div>
+
+    @if (errorMessage()) {
+      <p-message severity="error" [text]="errorMessage()" class="w-full" />
+    }
+
+    <p-button
+      type="submit"
+      label="Dołącz"
+      [loading]="loading()"
+      [disabled]="form.invalid"
+      styleClass="w-full"
+    />
+  </form>
+</p-dialog>

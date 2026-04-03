@@ -1,0 +1,24 @@
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #d4d4d4;
+  text-decoration: none;
+}
+
+.navbar-logo:hover {
+  color: #e0e0e0;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #b0b0b0;
+  font-size: 0.875rem;
+}

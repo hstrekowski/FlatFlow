@@ -64,6 +64,18 @@ export class AuthService {
     }
   }
 
+  getFirstName(): string {
+    const token = this.getToken();
+    if (!token) return '';
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.firstName || '';
+    } catch {
+      return '';
+    }
+  }
+
   private setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
     this.loggedIn$.next(true);
