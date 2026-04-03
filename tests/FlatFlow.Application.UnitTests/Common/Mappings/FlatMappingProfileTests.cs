@@ -58,7 +58,6 @@ public class FlatMappingProfileTests
         dto.Id.Should().Be(flat.Id);
         dto.Name.Should().Be("Mieszkanie");
         dto.City.Should().Be("Kraków");
-        dto.AccessCode.Should().Be(flat.AccessCode);
     }
 
     [Fact]

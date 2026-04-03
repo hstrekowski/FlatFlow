@@ -16,10 +16,19 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'flats',
+    path: '',
     component: MainLayoutComponent,
     canActivate: [authGuard],
-    loadChildren: () => import('./features/flats/flats.routes').then((m) => m.FLATS_ROUTES),
+    children: [
+      {
+        path: 'flats',
+        loadChildren: () => import('./features/flats/flats.routes').then((m) => m.FLATS_ROUTES),
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./features/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+    ],
   },
   { path: '**', redirectTo: 'login' },
 ];
