@@ -28,14 +28,14 @@
     />
   </div>
 
-  @if (errorMessage) {
-    <p-message severity="error" [text]="errorMessage" class="w-full" />
+  @if (errorMessage()) {
+    <p-message severity="error" [text]="errorMessage()" class="w-full" />
   }
 
   <p-button
     type="submit"
     label="Zarejestruj"
-    [loading]="loading"
+    [loading]="loading()"
     [disabled]="form.invalid"
     styleClass="w-full"
   />
