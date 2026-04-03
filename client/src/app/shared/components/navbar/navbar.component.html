@@ -4,10 +4,10 @@
   </ng-template>
   <ng-template #end>
     <div class="navbar-right">
-      <span class="navbar-user">
+      <a routerLink="/profile" class="navbar-user">
         <i class="pi pi-user"></i>
         {{ firstName }}
-      </span>
+      </a>
       <p-button
         label="Logout"
         icon="pi pi-sign-out"

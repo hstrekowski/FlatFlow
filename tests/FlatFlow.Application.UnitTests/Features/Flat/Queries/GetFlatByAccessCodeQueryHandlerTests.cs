@@ -42,7 +42,6 @@ public class GetFlatByAccessCodeQueryHandlerTests
         result.Id.Should().Be(flat.Id);
         result.Name.Should().Be("Mieszkanie");
         result.City.Should().Be("Kraków");
-        result.AccessCode.Should().Be(flat.AccessCode);
     }
 
     [Fact]

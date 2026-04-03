@@ -1,0 +1,35 @@
+<p-toast />
+<div class="profile-page">
+  <h2>Profile</h2>
+
+  @if (loading()) {
+    <p class="loading-text">Loading...</p>
+  }
+
+  @if (!loading()) {
+    <form [formGroup]="form" (ngSubmit)="onSave()" class="profile-form">
+      <div class="field">
+        <label for="firstName">First Name</label>
+        <input id="firstName" type="text" pInputText formControlName="firstName" class="w-full" />
+      </div>
+
+      <div class="field">
+        <label for="lastName">Last Name</label>
+        <input id="lastName" type="text" pInputText formControlName="lastName" class="w-full" />
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" pInputText formControlName="email" class="w-full" />
+      </div>
+
+      <p-button
+        type="submit"
+        label="Save"
+        icon="pi pi-check"
+        [loading]="saving()"
+        [disabled]="form.invalid"
+      />
+    </form>
+  }
+</div>

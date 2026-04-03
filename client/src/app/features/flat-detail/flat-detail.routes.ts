@@ -43,6 +43,13 @@ export const FLAT_DETAIL_ROUTES: Routes = [
             (m) => m.TenantsListComponent,
           ),
       },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./settings/flat-settings.component').then(
+            (m) => m.FlatSettingsComponent,
+          ),
+      },
     ],
   },
 ];

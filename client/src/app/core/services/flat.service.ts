@@ -34,4 +34,16 @@ export class FlatService {
   joinFlat(request: JoinFlatRequest): Observable<string> {
     return this.http.post<string>(`${environment.apiUrl}/flats/join`, request);
   }
+
+  updateFlat(id: string, request: { flatId: string; name: string; street: string; city: string; zipCode: string; country: string }): Observable<void> {
+    return this.http.put<void>(`${environment.apiUrl}/flats/${id}`, request);
+  }
+
+  deleteFlat(id: string): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/flats/${id}`);
+  }
+
+  refreshAccessCode(id: string): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/flats/${id}/refresh-access-code`, {});
+  }
 }
