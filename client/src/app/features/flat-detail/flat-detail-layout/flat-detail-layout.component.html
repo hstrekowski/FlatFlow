@@ -1,0 +1,53 @@
+<div class="flat-detail-layout">
+  <aside class="sidebar desktop-only">
+    @if (flat()) {
+      <h3 class="sidebar-title">{{ flat()!.name }}</h3>
+    }
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/flats/' + flatId }"
+          class="sidebar-link"
+        >
+          <i [class]="item.icon"></i>
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <div class="mobile-header mobile-only">
+    <p-button
+      icon="pi pi-bars"
+      [text]="true"
+      severity="secondary"
+      (onClick)="sidebarVisible.set(true)"
+    />
+  </div>
+
+  <p-drawer [(visible)]="sidebarVisible" [modal]="true">
+    @if (flat()) {
+      <h3 class="sidebar-title">{{ flat()!.name }}</h3>
+    }
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/flats/' + flatId }"
+          class="sidebar-link"
+          (click)="sidebarVisible.set(false)"
+        >
+          <i [class]="item.icon"></i>
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  </p-drawer>
+
+  <main class="flat-content">
+    <router-outlet />
+  </main>
+</div>

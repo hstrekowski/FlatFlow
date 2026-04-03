@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { FlatDto, CreateFlatRequest, JoinFlatRequest } from '../../models/flat.model';
+import { FlatDto, FlatDetailDto, CreateFlatRequest, JoinFlatRequest } from '../../models/flat.model';
 import { PaginatedResult } from '../../models/paginated-result.model';
 
 @Injectable({ providedIn: 'root' })
@@ -21,6 +21,10 @@ export class FlatService {
 
   createFlat(request: CreateFlatRequest): Observable<string> {
     return this.http.post<string>(`${environment.apiUrl}/flats`, request);
+  }
+
+  getFlatById(id: string): Observable<FlatDetailDto> {
+    return this.http.get<FlatDetailDto>(`${environment.apiUrl}/flats/${id}`);
   }
 
   getByAccessCode(code: string): Observable<FlatDto> {
