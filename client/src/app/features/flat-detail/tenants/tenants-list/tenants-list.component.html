@@ -1,0 +1,77 @@
+<p-toast />
+<div class="tenants-page">
+  <h2>Tenants</h2>
+
+  @if (loading()) {
+    <p class="loading-text">Loading...</p>
+  }
+
+  @if (!loading() && tenants().length === 0) {
+    <p class="empty-text">No tenants.</p>
+  }
+
+  @if (!loading() && tenants().length > 0) {
+    <table class="tenants-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          @if (isCurrentUserOwner) {
+            <th>Actions</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (tenant of tenants(); track tenant.id) {
+          <tr>
+            <td>{{ tenant.firstName }} {{ tenant.lastName }}</td>
+            <td>{{ tenant.email }}</td>
+            <td>
+              @if (tenant.isOwner) {
+                <p-tag value="Owner" severity="warn" />
+              } @else {
+                <p-tag value="Member" severity="info" />
+              }
+            </td>
+            @if (isCurrentUserOwner) {
+              <td>
+                <div class="action-buttons">
+                  @if (!tenant.isOwner) {
+                    <p-button
+                      icon="pi pi-arrow-up"
+                      [text]="true"
+                      [rounded]="true"
+                      severity="success"
+                      pTooltip="Promote to owner"
+                      (onClick)="confirmPromote(tenant)"
+                    />
+                  } @else {
+                    <p-button
+                      icon="pi pi-arrow-down"
+                      [text]="true"
+                      [rounded]="true"
+                      severity="warn"
+                      pTooltip="Revoke ownership"
+                      (onClick)="confirmRevoke(tenant)"
+                    />
+                  }
+                  <p-button
+                    icon="pi pi-trash"
+                    [text]="true"
+                    [rounded]="true"
+                    severity="danger"
+                    pTooltip="Remove from flat"
+                    (onClick)="confirmRemove(tenant)"
+                  />
+                </div>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  <p-confirmDialog />
+</div>
