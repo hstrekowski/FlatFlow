@@ -1,0 +1,69 @@
+<div class="flats-page">
+  <section class="flats-section">
+    <div class="section-header">
+      <h2>Twoje mieszkania</h2>
+      <p-button label="Utwórz mieszkanie" icon="pi pi-plus" (onClick)="openCreateDialog()" />
+    </div>
+
+    @if (myFlats().length === 0 && !loading()) {
+      <p class="empty-state">Nie należysz jeszcze do żadnego mieszkania.</p>
+    }
+
+    <div class="flats-grid">
+      @for (flat of myFlats(); track flat.id) {
+        <p-card styleClass="flat-card" (click)="goToFlat(flat.id)">
+          <div class="flat-card-content">
+            <h3>{{ flat.name }}</h3>
+            <p><i class="pi pi-map-marker"></i> {{ flat.city }}</p>
+          </div>
+        </p-card>
+      }
+    </div>
+  </section>
+
+  <section class="flats-section">
+    <div class="section-header">
+      <h2>Wszystkie mieszkania</h2>
+      <p-button
+        label="Dołącz po kodzie"
+        icon="pi pi-sign-in"
+        severity="secondary"
+        (onClick)="openGenericJoinDialog()"
+      />
+    </div>
+
+    @if (totalCount > pageSize) {
+      <p-paginator
+        [rows]="pageSize"
+        [totalRecords]="totalCount"
+        [first]="(page - 1) * pageSize"
+        (onPageChange)="onPageChange($event)"
+      />
+    }
+
+    @if (allFlats().length === 0 && !loading()) {
+      <p class="empty-state">Brak dostępnych mieszkań.</p>
+    }
+
+    <div class="flats-grid">
+      @for (flat of allFlats(); track flat.id) {
+        <p-card
+          styleClass="flat-card"
+          [class.my-flat]="isMyFlat(flat)"
+          (click)="isMyFlat(flat) ? goToFlat(flat.id) : openJoinDialog(flat)"
+        >
+          <div class="flat-card-content">
+            <h3>{{ flat.name }}</h3>
+            <p><i class="pi pi-map-marker"></i> {{ flat.city }}</p>
+            @if (isMyFlat(flat)) {
+              <span class="badge">Twoje</span>
+            }
+          </div>
+        </p-card>
+      }
+    </div>
+  </section>
+</div>
+
+<app-create-flat-dialog (created)="onFlatCreated()" />
+<app-join-flat-dialog (joined)="onFlatJoined()" />

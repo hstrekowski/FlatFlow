@@ -1,13 +1,21 @@
+import { TenantDto } from './tenant.model';
+import { ChoreDto } from './chore.model';
+import { PaymentDto } from './payment.model';
+import { NoteDto } from './note.model';
+
 export interface FlatDto {
+  id: string;
+  name: string;
+  city: string;
+}
+
+export interface FlatDetailDto {
   id: string;
   name: string;
   street: string;
   city: string;
   zipCode: string;
   country: string;
-}
-
-export interface FlatDetailDto extends FlatDto {
   accessCode: string;
   tenants: TenantDto[];
   chores: ChoreDto[];
@@ -35,8 +43,3 @@ export interface UpdateFlatRequest {
 export interface JoinFlatRequest {
   accessCode: string;
 }
-
-import { TenantDto } from './tenant.model';
-import { ChoreDto } from './chore.model';
-import { PaymentDto } from './payment.model';
-import { NoteDto } from './note.model';

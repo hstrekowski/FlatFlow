@@ -1,0 +1,45 @@
+<p-dialog
+  header="Utwórz mieszkanie"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '450px' }"
+>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <div class="field">
+      <label for="name">Nazwa</label>
+      <input id="name" type="text" pInputText formControlName="name" class="w-full" />
+    </div>
+
+    <div class="field">
+      <label for="street">Ulica</label>
+      <input id="street" type="text" pInputText formControlName="street" class="w-full" />
+    </div>
+
+    <div class="field">
+      <label for="city">Miasto</label>
+      <input id="city" type="text" pInputText formControlName="city" class="w-full" />
+    </div>
+
+    <div class="field">
+      <label for="zipCode">Kod pocztowy</label>
+      <input id="zipCode" type="text" pInputText formControlName="zipCode" class="w-full" />
+    </div>
+
+    <div class="field">
+      <label for="country">Kraj</label>
+      <input id="country" type="text" pInputText formControlName="country" class="w-full" />
+    </div>
+
+    @if (errorMessage()) {
+      <p-message severity="error" [text]="errorMessage()" class="w-full" />
+    }
+
+    <p-button
+      type="submit"
+      label="Utwórz"
+      [loading]="loading()"
+      [disabled]="form.invalid"
+      styleClass="w-full"
+    />
+  </form>
+</p-dialog>
