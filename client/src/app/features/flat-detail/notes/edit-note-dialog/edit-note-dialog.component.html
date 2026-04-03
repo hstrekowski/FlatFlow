@@ -1,0 +1,36 @@
+<p-dialog
+  header="Edit Note"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '500px' }"
+>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <div class="field">
+      <label for="title">Title</label>
+      <input id="title" type="text" pInputText formControlName="title" class="w-full" />
+    </div>
+
+    <div class="field">
+      <label for="content">Content</label>
+      <textarea
+        id="content"
+        pTextarea
+        formControlName="content"
+        rows="5"
+        class="w-full"
+      ></textarea>
+    </div>
+
+    @if (errorMessage()) {
+      <p-message severity="error" [text]="errorMessage()" class="w-full" />
+    }
+
+    <p-button
+      type="submit"
+      label="Save"
+      [loading]="loading()"
+      [disabled]="form.invalid"
+      styleClass="w-full"
+    />
+  </form>
+</p-dialog>

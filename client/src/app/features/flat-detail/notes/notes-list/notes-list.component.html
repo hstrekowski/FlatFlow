@@ -1,0 +1,75 @@
+<p-toast />
+<div class="notes-page">
+  <div class="notes-header">
+    <h2>Notes</h2>
+    <p-button label="Add Note" icon="pi pi-plus" (onClick)="openAddNote()" />
+  </div>
+
+  @if (loading()) {
+    <p class="loading-text">Loading...</p>
+  }
+
+  @if (!loading() && notes().length === 0) {
+    <p class="empty-text">No notes yet. Add one to get started.</p>
+  }
+
+  @if (!loading() && notes().length > 0) {
+    @for (note of notes(); track note.id) {
+      <div class="note-card">
+        <div class="note-card-header">
+          <div class="note-info">
+            <h3 class="note-title">{{ note.title }}</h3>
+            <span class="note-author">by {{ getAuthorName(note.authorId) }}</span>
+          </div>
+          <div class="action-buttons">
+            <p-button
+              icon="pi pi-pencil"
+              [text]="true"
+              [rounded]="true"
+              severity="info"
+              (onClick)="openEditNote(note)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [text]="true"
+              [rounded]="true"
+              severity="danger"
+              (onClick)="confirmDeleteNote(note)"
+            />
+          </div>
+        </div>
+        <p class="note-content">{{ note.content }}</p>
+      </div>
+    }
+
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <p-button
+          icon="pi pi-chevron-left"
+          [text]="true"
+          [disabled]="page === 1"
+          (onClick)="prevPage()"
+        />
+        <span class="page-info">Page {{ page }} of {{ totalPages }}</span>
+        <p-button
+          icon="pi pi-chevron-right"
+          [text]="true"
+          [disabled]="page === totalPages"
+          (onClick)="nextPage()"
+        />
+      </div>
+    }
+  }
+
+  <p-confirmDialog />
+
+  <app-add-note-dialog
+    [flatId]="flatId"
+    [authorId]="currentTenantId"
+    (created)="loadNotes()"
+  />
+  <app-edit-note-dialog
+    [flatId]="flatId"
+    (updated)="loadNotes()"
+  />
+</div>
