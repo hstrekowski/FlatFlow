@@ -1,6 +1,8 @@
 # Flat Flow
 
-## A full-stack web application for managing shared apartments — chores, payments, notes, and tenants. Built with **Clean Architecture** and **CQRS** pattern.
+A full-stack web application for managing shared apartments — chores, payments, notes, and tenants. Built with **Clean Architecture** and **CQRS** pattern. 
+
+Full documentation continues below the gallery.
 
 ## Screenshots
 
@@ -30,8 +32,8 @@ The project follows **Clean Architecture** with strict layer separation:
 
 ```
 src/
-├── FlatFlow.Domain           # Entities, Value Objects, Domain Exceptions (zero dependencies)
-├── FlatFlow.Application      # Use Cases (CQRS), DTOs, Repository Interfaces, Validators
+├── FlatFlow.Domain           # Entities, Value Objects, Domain Exceptions
+├── FlatFlow.Application      # CQRS, DTOs, Repository Interfaces, Validators
 ├── FlatFlow.Infrastructure   # EF Core, Repositories, Identity, Migrations
 ├── FlatFlow.Api              # Controllers, Middleware, DI Configuration
 tests/
@@ -44,9 +46,9 @@ client/
 
 ## Features
 
-- **Auth** — Register, login, JWT-based session, profile management
+- **Auth** — Register, login, JWT, profile management
 - **Flats** — Create flats, join via access code, manage settings
-- **Chores** — CRUD with frequency (once/daily/weekly/monthly), assign to tenants, mark as complete/reopen
+- **Chores** — CRUD, assign to tenants, mark as complete/reopen
 - **Payments** — CRUD with shares per tenant, mark as paid/partial
 - **Notes** — CRUD with pagination
 - **Tenants** — View members, promote/revoke ownership, remove (owner-only)
