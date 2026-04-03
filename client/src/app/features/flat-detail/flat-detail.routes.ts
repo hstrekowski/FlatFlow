@@ -15,6 +15,13 @@ export const FLAT_DETAIL_ROUTES: Routes = [
             (m) => m.FlatDashboardComponent,
           ),
       },
+      {
+        path: 'chores',
+        loadComponent: () =>
+          import('./chores/chores-list/chores-list.component').then(
+            (m) => m.ChoresListComponent,
+          ),
+      },
     ],
   },
 ];

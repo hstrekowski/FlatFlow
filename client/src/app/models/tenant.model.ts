@@ -4,5 +4,4 @@ export interface TenantDto {
   lastName: string;
   email: string;
   isOwner: boolean;
-  userId: string;
 }

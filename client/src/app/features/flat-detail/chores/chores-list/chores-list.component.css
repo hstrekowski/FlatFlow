@@ -1,0 +1,104 @@
+.chores-page h2 {
+  margin: 0;
+  color: #d4d4d4;
+}
+
+.chores-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.loading-text,
+.empty-text {
+  color: #9e9e9e;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.chore-card {
+  background: #2a2a2a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.chore-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.chore-info {
+  flex: 1;
+}
+
+.chore-title {
+  margin: 0 0 0.25rem 0;
+  color: #e0e0e0;
+  font-size: 1.1rem;
+}
+
+.chore-description {
+  color: #9e9e9e;
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+}
+
+.chore-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.meta-text {
+  color: #9e9e9e;
+  font-size: 0.8rem;
+}
+
+.assignments-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #333;
+}
+
+.assignments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.assignments-header h4 {
+  margin: 0;
+  color: #d4d4d4;
+}
+
+.assignments-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.assignments-table th,
+.assignments-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.assignments-table th {
+  color: #9e9e9e;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.assignments-table td {
+  color: #d4d4d4;
+  font-size: 0.875rem;
+}

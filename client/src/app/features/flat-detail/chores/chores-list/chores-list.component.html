@@ -1,0 +1,139 @@
+<p-toast />
+<div class="chores-page">
+  <div class="chores-header">
+    <h2>Chores</h2>
+    <p-button label="Add Chore" icon="pi pi-plus" (onClick)="openAddChore()" />
+  </div>
+
+  @if (loading()) {
+    <p class="loading-text">Loading...</p>
+  }
+
+  @if (!loading() && chores().length === 0) {
+    <p class="empty-text">No chores yet. Add one to get started.</p>
+  }
+
+  @if (!loading() && chores().length > 0) {
+    @for (chore of chores(); track chore.id) {
+      <div class="chore-card">
+        <div class="chore-card-header">
+          <div class="chore-info">
+            <h3 class="chore-title">{{ chore.title }}</h3>
+            <p class="chore-description">{{ chore.description }}</p>
+            <div class="chore-meta">
+              <p-tag [value]="getFrequencyLabel(chore.frequency)" severity="info" />
+              <span class="meta-text">by {{ getTenantName(chore.createdById) }}</span>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <p-button
+              icon="pi pi-pencil"
+              [text]="true"
+              [rounded]="true"
+              severity="info"
+              (onClick)="openEditChore(chore)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [text]="true"
+              [rounded]="true"
+              severity="danger"
+              (onClick)="confirmDeleteChore(chore)"
+            />
+          </div>
+        </div>
+
+        <div class="assignments-section">
+          <div class="assignments-header">
+            <h4>Assignments</h4>
+            <p-button
+              label="Add Assignment"
+              icon="pi pi-plus"
+              size="small"
+              [outlined]="true"
+              (onClick)="openAddAssignment(chore.id)"
+            />
+          </div>
+
+          @if (chore.assignments && chore.assignments.length > 0) {
+            <table class="assignments-table">
+              <thead>
+                <tr>
+                  <th>Tenant</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (assignment of chore.assignments; track assignment.id) {
+                  <tr>
+                    <td>{{ getTenantName(assignment.tenantId) }}</td>
+                    <td>{{ assignment.dueDate | date: 'yyyy-MM-dd' }}</td>
+                    <td>
+                      @if (assignment.isCompleted) {
+                        <p-tag value="Completed" severity="success" />
+                      } @else {
+                        <p-tag value="Pending" severity="warn" />
+                      }
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        @if (!assignment.isCompleted) {
+                          <p-button
+                            icon="pi pi-check"
+                            [text]="true"
+                            [rounded]="true"
+                            severity="success"
+                            pTooltip="Complete"
+                            (onClick)="completeAssignment(chore.id, assignment.id)"
+                          />
+                        } @else {
+                          <p-button
+                            icon="pi pi-replay"
+                            [text]="true"
+                            [rounded]="true"
+                            severity="warn"
+                            pTooltip="Reopen"
+                            (onClick)="reopenAssignment(chore.id, assignment.id)"
+                          />
+                        }
+                        <p-button
+                          icon="pi pi-trash"
+                          [text]="true"
+                          [rounded]="true"
+                          severity="danger"
+                          pTooltip="Remove"
+                          (onClick)="confirmDeleteAssignment(chore.id, assignment)"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <p class="empty-text">No assignments yet.</p>
+          }
+        </div>
+      </div>
+    }
+  }
+
+  <p-confirmDialog />
+
+  <app-add-chore-dialog
+    [flatId]="flatId"
+    [createdById]="currentTenantId"
+    (created)="loadChores()"
+  />
+  <app-edit-chore-dialog
+    [flatId]="flatId"
+    (updated)="loadChores()"
+  />
+  <app-add-assignment-dialog
+    [flatId]="flatId"
+    [tenants]="tenants()"
+    (created)="loadChores()"
+  />
+</div>
