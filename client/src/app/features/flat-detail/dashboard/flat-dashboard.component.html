@@ -1,0 +1,55 @@
+@if (loading()) {
+  <p class="loading-text">Loading...</p>
+}
+
+@if (flat(); as flat) {
+  <div class="dashboard">
+    <h2>Dashboard</h2>
+    <p class="dashboard-address">
+      <i class="pi pi-map-marker"></i>
+      {{ flat.street }}, {{ flat.city }} {{ flat.zipCode }}, {{ flat.country }}
+    </p>
+
+    <div class="stats-grid">
+      <p-card styleClass="stat-card">
+        <div class="stat-content">
+          <i class="pi pi-check-square stat-icon"></i>
+          <div>
+            <span class="stat-value">{{ choreCount }}</span>
+            <span class="stat-label">Chores</span>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="stat-card">
+        <div class="stat-content">
+          <i class="pi pi-wallet stat-icon"></i>
+          <div>
+            <span class="stat-value">{{ paymentCount }}</span>
+            <span class="stat-label">Payments</span>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="stat-card">
+        <div class="stat-content">
+          <i class="pi pi-file stat-icon"></i>
+          <div>
+            <span class="stat-value">{{ noteCount }}</span>
+            <span class="stat-label">Notes</span>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="stat-card">
+        <div class="stat-content">
+          <i class="pi pi-users stat-icon"></i>
+          <div>
+            <span class="stat-value">{{ tenantCount }}</span>
+            <span class="stat-label">Tenants</span>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+}
