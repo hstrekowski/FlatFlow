@@ -25,9 +25,6 @@
       severity="secondary"
       (onClick)="sidebarVisible.set(true)"
     />
-    @if (flat()) {
-      <span class="mobile-title">{{ flat()!.name }}</span>
-    }
   </div>
 
   <p-drawer [(visible)]="sidebarVisible" [modal]="true">
